@@ -58,7 +58,7 @@ function Header() {
           >
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item active">
-                <Link className="nav-link" href="#">
+                <Link className="nav-link" to="/product">
                   線香商品 <span className="visually-hidden">(current)</span>
                 </Link>
               </li>

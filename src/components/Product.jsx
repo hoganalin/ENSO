@@ -92,7 +92,7 @@ const Products = () => {
               <div className="col-md-3" key={product.id}>
                 <div className="card border-0 mb-4 position-relative">
                   <img
-                    src={product.imagesUrl}
+                    src={product.imageUrl}
                     className="card-img-top rounded-0"
                     alt="..."
                   />

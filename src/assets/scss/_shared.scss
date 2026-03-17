@@ -1,0 +1,35 @@
+/* Shared / Utilities */
+.text-yellow {
+  color: $yellow;
+}
+.text-gray-550 {
+  color: $gray-550;
+}
+
+.bg-navbar {
+  background-color: $custom-color-navbar-bg;
+}
+
+.btn-hover-effect {
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    background-color: $white;
+    color: $enso-brand-gold;
+    border-color: $white;
+  }
+}
+
+/* Section Common */
+.section-padding {
+  padding: $custom-section-padding;
+}
+
+.bg-custom-light {
+  background-color: $custom-bg-light;
+}
+
+.bg-custom-white {
+  background-color: $custom-bg-white;
+}

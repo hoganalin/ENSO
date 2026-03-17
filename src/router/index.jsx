@@ -5,6 +5,7 @@ import Products from "../components/Product.jsx";
 import SingleProduct from "../components/SingleProduct.jsx";
 import Cart from "../components/Cart.jsx";
 import CheckoutSuccess from "../components/CheckoutSuccess.jsx";
+import NotFound from "../components/NotFound.jsx";
 export const routes = createHashRouter([
   {
     path: "/",
@@ -31,6 +32,10 @@ export const routes = createHashRouter([
         element: <CheckoutSuccess />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
