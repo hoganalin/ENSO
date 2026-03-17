@@ -53,7 +53,7 @@ const Products = () => {
               return (
                 <a
                   key={category}
-                  className={`nav-item nav-link text-nowrap px-3 ${
+                  className={`nav-item nav-link text-nowrap px-4 mx-1 ${
                     currentCategory === category ? "active" : ""
                   }`}
                   href="#"
@@ -62,7 +62,7 @@ const Products = () => {
                     setCurrentCategory(category);
                   }}
                 >
-                  {category}
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
                 </a>
               );
             })}
@@ -71,43 +71,46 @@ const Products = () => {
         </nav>
       </div>
       {/* mobile / small screens dropdown */}
-      <div className="d-block d-md-none mb-3">
+      <div className="d-block d-md-none mb-4 px-3">
         <select
-          className="form-select"
+          className="form-select rounded-pill"
           value={currentCategory}
           onChange={(e) => setCurrentCategory(e.target.value)}
         >
           {categories.map((category) => (
             <option key={category} value={category}>
-              {category}
+              {category.charAt(0).toUpperCase() + category.slice(1)}
             </option>
           ))}
         </select>
       </div>
       <div className="container mt-md-5 mt-3 mb-7">
-        <div className="row">
+        <div className="row g-4">
           {/* 產品列表 */}
           {products.map((product) => {
             return (
-              <div className="col-md-3" key={product.id}>
-                <div className="card border-0 mb-4 position-relative">
-                  <img
-                    src={product.imageUrl}
-                    className="card-img-top rounded-0"
-                    alt="..."
-                  />
-                  <a
-                    href="#"
-                    className="text-dark"
-                    onClick={(e) => handleViewDetail(e, product.id)}
-                  >
-                    <i
-                      className="far fa-heart position-absolute"
-                      style={{ right: "16px", top: "16px" }}
-                    ></i>
-                  </a>
-                  <div className="card-body p-0">
-                    <h4 className="mb-0 mt-3">
+              <div className="col-lg-3 col-md-4 col-sm-6" key={product.id}>
+                <div className="product-card">
+                  <div className="product-img-wrapper">
+                    <img
+                      src={product.imageUrl}
+                      className="product-img"
+                      alt={product.title}
+                    />
+                    <div className="product-img-overlay">
+                      <button
+                        className="btn btn-light rounded-pill px-4 shadow-sm"
+                        onClick={(e) => handleViewDetail(e, product.id)}
+                      >
+                        查看詳情
+                      </button>
+                    </div>
+                    {/* 這裡可以根據邏輯加入 Badge，目前範例加入一個 NEW */}
+                    <div className="product-badge">精選</div>
+                  </div>
+                  <div className="product-content">
+                    <div className="product-category">{product.category}</div>
+                    <h4 className="product-title">
                       <a
                         href="#"
                         onClick={(e) => handleViewDetail(e, product.id)}
@@ -115,12 +118,19 @@ const Products = () => {
                         {product.title}
                       </a>
                     </h4>
-                    <p className="card-text text-muted mb-0">
-                      {product.description}
-                    </p>
-                    <p className="text-muted mt-3">
-                      NT$ {currency(product.price)}
-                    </p>
+                    <p className="product-desc">{product.description}</p>
+                    <div className="product-footer">
+                      <span className="product-price">
+                        NT$ {currency(product.price)}
+                      </span>
+                      <button
+                        className="btn btn-outline-primary btn-sm rounded-circle"
+                        // style={{ width: '32px', height: '32px', padding: 0, display: 'flex', alignItems: 'center', justifyCenter: 'center' }}
+                        title="加入購物車"
+                      >
+                        <i className="fas fa-plus"></i>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
