@@ -1,76 +1,105 @@
-﻿import { useState, useEffect } from "react";
-import { currency } from "../utils/filter";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import { getProductApi, getAllProductsApi } from "../services/product";
+import { getProductApi } from "../services/product";
+import { createAsyncAddCart } from "../slice/cartSlice";
+import { RotatingLines } from "react-loader-spinner";
+import { currency } from "../utils/filter";
+import useMessage from "../hooks/useMessage";
+import Pagination from "./Pagination";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("all");
+  const [loadingCartId, setLoadingCartId] = useState(null);
+  const [loadingProductId, setLoadingProductId] = useState(null);
+  const [pagination, setPagination] = useState({});
   const navigate = useNavigate();
-  const handleViewDetail = (e, id) => {
+  const dispatch = useDispatch();
+  const { showSuccess, showError } = useMessage();
+
+  const handleAddCart = async (e, productId, qty = 1) => {
     e.preventDefault();
-    navigate(`/product/${id}`);
+    setLoadingCartId(productId);
+    try {
+      await dispatch(createAsyncAddCart({ id: productId, qty })).unwrap();
+      showSuccess("已成功加入購物車！");
+    } catch (error) {
+      console.error("加入購物車失敗：", error);
+      showError(error || "加入購物車失敗");
+    } finally {
+      setLoadingCartId(null);
+    }
   };
+
+  const handleViewDetail = async (e, productId) => {
+    e.preventDefault();
+    setLoadingProductId(productId);
+    try {
+      navigate(`/product/${productId}`);
+    } catch (error) {
+      console.error("導航出錯：", error);
+    } finally {
+      setLoadingProductId(null);
+    }
+  };
+
+  const getProducts = async (page = 1, category = currentCategory) => {
+    try {
+      const response = await getProductApi(page, category);
+      setProducts(response.data.products);
+      setPagination(response.data.pagination);
+    } catch (error) {
+      showError(error.response?.data?.message || "獲取產品列表失敗");
+    }
+  };
+
   useEffect(() => {
     const getAllProducts = async () => {
       try {
-        const response = await getAllProductsApi();
+        const response = await getProductApi(1, "all");
         const result = [
           "all",
           ...new Set(response.data.products.map((product) => product.category)),
         ];
+        //如果不解構會變成 ["all", Set(2) { "淨化系列", "放送系列" }] 這種結構
         setCategories(result);
       } catch (error) {
-        console.log(error?.response || error.message);
+        console.error("獲取類別失敗：", error);
+        showError("獲取產品類別失敗");
       }
     };
-
     getAllProducts();
   }, []);
 
   useEffect(() => {
-    const getProducts = async (page = 1, category) => {
-      try {
-        const response = await getProductApi(page, category);
-        setProducts(response.data.products);
-      } catch (error) {
-        console.log(error?.response || error.message);
-      }
-    };
-
     getProducts(1, currentCategory);
   }, [currentCategory]);
 
   return (
     <>
-      {/* desktop / tablet pills */}
       <div className="d-none d-md-block">
         <nav className="navbar navbar-expand-lg navbar-light justify-content-center custom-nav">
           <div className="navbar-nav flex-row overflow-auto navbar-custom-scroll nav-pills">
-            {/* categories */}
-            {categories.map((category) => {
-              return (
-                <a
-                  key={category}
-                  className={`nav-item nav-link text-nowrap px-4 mx-1 ${
-                    currentCategory === category ? "active" : ""
-                  }`}
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentCategory(category);
-                  }}
-                >
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
-                </a>
-              );
-            })}
-            {/* end categories */}
+            {categories.map((category) => (
+              <a
+                key={category}
+                className={`nav-item nav-link text-nowrap px-4 mx-1 ${
+                  currentCategory === category ? "active" : ""
+                }`}
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setCurrentCategory(category);
+                }}
+              >
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </a>
+            ))}
           </div>
         </nav>
       </div>
-      {/* mobile / small screens dropdown */}
       <div className="d-block d-md-none mb-4 px-3">
         <select
           className="form-select rounded-pill"
@@ -86,108 +115,75 @@ const Products = () => {
       </div>
       <div className="container mt-md-5 mt-3 mb-7">
         <div className="row g-4">
-          {/* 產品列表 */}
-          {products.map((product) => {
-            return (
-              <div className="col-lg-3 col-md-4 col-sm-6" key={product.id}>
-                <div className="product-card">
-                  <div className="product-img-wrapper">
-                    <img
-                      src={product.imageUrl}
-                      className="product-img"
-                      alt={product.title}
-                    />
-                    <div className="product-img-overlay">
-                      <button
-                        className="btn btn-light rounded-pill px-4 shadow-sm"
-                        onClick={(e) => handleViewDetail(e, product.id)}
-                      >
-                        查看詳情
-                      </button>
-                    </div>
-                    {/* 這裡可以根據邏輯加入 Badge，目前範例加入一個 NEW */}
-                    <div className="product-badge">精選</div>
+          {products.map((product) => (
+            <div className="col-lg-3 col-md-4 col-sm-6" key={product.id}>
+              <div className="product-card">
+                <div className="product-img-wrapper">
+                  <img
+                    src={product.imageUrl}
+                    className="product-img"
+                    alt={product.title}
+                  />
+                  <div className="product-img-overlay">
+                    <button
+                      className="btn btn-light rounded-pill px-4 shadow-sm"
+                      onClick={(e) => handleViewDetail(e, product.id)}
+                      disabled={loadingProductId === product.id}
+                    >
+                      {loadingProductId === product.id ? (
+                        <RotatingLines
+                          strokeColor="grey"
+                          strokeWidth="5"
+                          animationDuration="0.75"
+                          width="16"
+                        />
+                      ) : (
+                        "查看詳情"
+                      )}
+                    </button>
                   </div>
-                  <div className="product-content">
-                    <div className="product-category">{product.category}</div>
-                    <h4 className="product-title">
-                      <a
-                        href="#"
-                        onClick={(e) => handleViewDetail(e, product.id)}
-                      >
-                        {product.title}
-                      </a>
-                    </h4>
-                    <p className="product-desc">{product.description}</p>
-                    <div className="product-footer">
-                      <span className="product-price">
-                        NT$ {currency(product.price)}
-                      </span>
-                      <button
-                        className="btn btn-outline-primary btn-sm rounded-circle"
-                        // style={{ width: '32px', height: '32px', padding: 0, display: 'flex', alignItems: 'center', justifyCenter: 'center' }}
-                        title="加入購物車"
-                      >
+                  <div className="product-badge">精選</div>
+                </div>
+                <div className="product-content">
+                  <div className="product-category">{product.category}</div>
+                  <h4 className="product-title">
+                    <a
+                      href="#"
+                      onClick={(e) => handleViewDetail(e, product.id)}
+                    >
+                      {product.title}
+                    </a>
+                  </h4>
+                  <p className="product-desc">{product.description}</p>
+                  <div className="product-footer">
+                    <span className="product-price">
+                      NT$ {currency(product.price)}
+                    </span>
+                    <button
+                      className="btn btn-outline-primary btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                      style={{ width: "40px", height: "40px", padding: 0 }}
+                      title="加入購物車"
+                      onClick={(e) => handleAddCart(e, product.id)}
+                      disabled={loadingCartId === product.id}
+                    >
+                      {loadingCartId === product.id ? (
+                        <RotatingLines
+                          strokeColor="#6a994e"
+                          strokeWidth="5"
+                          animationDuration="0.75"
+                          width="20"
+                        />
+                      ) : (
                         <i className="fas fa-plus"></i>
-                      </button>
-                    </div>
+                      )}
+                    </button>
                   </div>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
-        <nav className="d-flex justify-content-center">
-          <ul className="pagination">
-            <li className="page-item">
-              <a
-                className="page-link"
-                href="#"
-                aria-label="Previous"
-                onClick={(e) => e.preventDefault()}
-              >
-                <span aria-hidden="true">&laquo;</span>
-              </a>
-            </li>
-            <li className="page-item active">
-              <a
-                className="page-link"
-                href="#"
-                onClick={(e) => e.preventDefault()}
-              >
-                1
-              </a>
-            </li>
-            <li className="page-item">
-              <a
-                className="page-link"
-                href="#"
-                onClick={(e) => e.preventDefault()}
-              >
-                2
-              </a>
-            </li>
-            <li className="page-item">
-              <a
-                className="page-link"
-                href="#"
-                onClick={(e) => e.preventDefault()}
-              >
-                3
-              </a>
-            </li>
-            <li className="page-item">
-              <a
-                className="page-link"
-                href="#"
-                aria-label="Next"
-                onClick={(e) => e.preventDefault()}
-              >
-                <span aria-hidden="true">&raquo;</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
+        <Pagination pagination={pagination} onChangePage={getProducts} />
       </div>
     </>
   );

@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router";
-import { createAsyncGetCart } from "../slice/cartSlice";
-import logo from "../images/logo.png";
 import { useSelector } from "react-redux";
+import { Link } from "react-router";
+
+import logo from "../images/logo.png";
+
+import { createAsyncGetCart } from "../slice/cartSlice";
 
 function Header() {
   const carts = useSelector((state) => state.cart.carts);
@@ -12,7 +14,7 @@ function Header() {
     dispatch(createAsyncGetCart());
   }, [dispatch]);
   return (
-    <div className="sticky-top bg-navbar">
+    <div className="bg-navbar">
       <div className="container">
         <nav className="navbar navbar-expand-lg navbar-light">
           <Link className="navbar-brand d-inline-block text-center" to="/">
@@ -68,9 +70,9 @@ function Header() {
                 </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#">
+                <Link className="nav-link" to="/about">
                   關於品牌
-                </a>
+                </Link>
               </li>
             </ul>
 

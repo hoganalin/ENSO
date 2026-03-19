@@ -1,5 +1,11 @@
-﻿import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { addCartApi, deleteSingleCartApi, getCartApi } from "../services/cart";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  addCartApi,
+  deleteSingleCartApi,
+  deleteAllCartApi,
+  getCartApi,
+  updateCartApi,
+} from "../services/cart";
 
 const cartSlice = createSlice({
   name: "cart",
@@ -17,6 +23,7 @@ const cartSlice = createSlice({
   },
 });
 
+// 取得購物車內容清單
 export const createAsyncGetCart = createAsyncThunk(
   "cart/createAsyncGetCart",
   async (_, { dispatch }) => {
@@ -29,11 +36,13 @@ export const createAsyncGetCart = createAsyncThunk(
   },
 );
 
+// 新增商品至購物車
 export const createAsyncAddCart = createAsyncThunk(
   "cart/createAsyncAddCart",
   async ({ id, qty = 1 }, { dispatch }) => {
     try {
       await addCartApi({ product_id: id, qty });
+      // 新增成功後重新取得最新購物車狀態
       dispatch(createAsyncGetCart());
     } catch (error) {
       console.log(error?.response || error.message);
@@ -41,11 +50,41 @@ export const createAsyncAddCart = createAsyncThunk(
   },
 );
 
+// 刪除購物車單一商品
 export const createAsyncDeleteSingleCart = createAsyncThunk(
   "cart/createAsyncDeleteSingleCart",
   async (id, { dispatch }) => {
     try {
       await deleteSingleCartApi(id);
+      // 刪除後重新取得購物車狀態以同步畫面
+      dispatch(createAsyncGetCart());
+    } catch (error) {
+      console.log(error?.response || error.message);
+    }
+  },
+);
+
+// 清空全部購物車
+export const createAsyncDeleteAllCart = createAsyncThunk(
+  "cart/createAsyncDeleteAllCart",
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await deleteAllCartApi();
+      dispatch(createAsyncGetCart());
+      return response.data;
+    } catch (error) {
+      console.log(error?.response || error.message);
+    }
+  },
+);
+
+// 更新/修改購物車中產品的數量
+export const createAsyncUpdateCart = createAsyncThunk(
+  "cart/createAsyncUpdateCart",
+  async ({ id, product_id, qty }, { dispatch }) => {
+    try {
+      await updateCartApi(id, { product_id, qty });
+      // 更新後同步最新金額與品項資料
       dispatch(createAsyncGetCart());
     } catch (error) {
       console.log(error?.response || error.message);

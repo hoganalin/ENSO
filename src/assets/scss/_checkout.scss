@@ -1,0 +1,157 @@
+@import "variables-custom";
+
+// ── Shared Progress Bar ──
+.checkout-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: $white;
+      border: 2px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #999;
+      margin-bottom: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .step-text {
+      font-size: 0.9rem;
+      color: #999;
+      font-weight: 500;
+    }
+
+    &.active,
+    &.completed {
+      .step-num {
+        border-color: $enso-brand-primary;
+        background-color: $enso-brand-primary;
+        color: $white;
+      }
+      .step-text {
+        color: $enso-brand-primary;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .step-line {
+    flex-grow: 1;
+    height: 2px;
+    background-color: #eee;
+    margin: 0 15px;
+    margin-bottom: 25px; // 考慮到文字的高度
+
+    &.active {
+      background-color: $enso-brand-primary;
+    }
+  }
+}
+
+.checkout-page {
+  background-color: #fcfbf9;
+  min-height: 100vh;
+
+  // ── Form Container ──
+  .checkout-form-container {
+    background-color: $white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.03);
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: $enso-text-primary;
+      position: relative;
+      padding-bottom: 12px;
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 40px;
+        height: 2px;
+        background-color: $enso-brand-gold;
+      }
+    }
+  }
+
+  // ── Custom Input ──
+  .enso-input {
+    border: 1px solid #e0e0e0;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+
+    &:focus {
+      border-color: $enso-brand-gold;
+      box-shadow: 0 0 0 4px rgba($enso-brand-gold, 0.1);
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #ccc;
+    }
+  }
+
+  // ── Order Summary ──
+  .order-summary-card {
+    background-color: $white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.03);
+    position: sticky;
+    top: 100px;
+
+    .summary-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: $enso-text-primary;
+    }
+
+    .item-img-mini {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .item-name {
+      font-weight: 600;
+      color: $enso-text-primary;
+    }
+
+    .price-details {
+      color: #555;
+      font-size: 1rem;
+
+      .total-price {
+        color: $enso-text-primary;
+      }
+    }
+  }
+}

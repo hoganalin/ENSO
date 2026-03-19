@@ -1,11 +1,14 @@
 import { createHashRouter } from "react-router";
-import FrontendLayout from "../layout/FrontendLayout.jsx";
-import Home from "../views/frontend/Home.jsx";
-import Products from "../components/Product.jsx";
-import SingleProduct from "../components/SingleProduct.jsx";
+
 import Cart from "../components/Cart.jsx";
 import CheckoutSuccess from "../components/CheckoutSuccess.jsx";
 import NotFound from "../components/NotFound.jsx";
+import Products from "../components/Product.jsx";
+import SingleProduct from "../components/SingleProduct.jsx";
+import FrontendLayout from "../layout/FrontendLayout.jsx";
+import Home from "../views/frontend/Home.jsx";
+import Checkout from "../components/Checkout.jsx";
+import About from "../components/about.jsx";
 export const routes = createHashRouter([
   {
     path: "/",
@@ -28,8 +31,16 @@ export const routes = createHashRouter([
         element: <Cart />,
       },
       {
+        path: "checkout",
+        element: <Checkout />,
+      },
+      {
         path: "checkout-success",
         element: <CheckoutSuccess />,
+      },
+      {
+        path: "about",
+        element: <About />,
       },
     ],
   },

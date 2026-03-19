@@ -153,7 +153,7 @@
         background: $enso-brand-primary;
         color: $white;
         border-color: $enso-brand-primary;
-        box-shadow: 0 8px 16px rgba($enso-brand-primary, 0.15); // 加入微影，提升立體感
+        box-shadow: none; // 移除陰影
 
         /* 移除原本全域 .custom-nav 定義的下底線裝飾 */
         &::after {

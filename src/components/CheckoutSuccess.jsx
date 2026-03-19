@@ -1,122 +1,72 @@
+import { useMemo } from "react";
+import { Link } from "react-router";
+
 function CheckoutSuccess() {
+  // 使用 useMemo 確保重新渲染時訂單編號不會變動
+  const orderNumber = useMemo(
+    () => "ENSO" + Math.floor(Math.random() * 10000000),
+    [],
+  );
+
   return (
-    <div className="container">
-      <div
-        style={{
-          minHeight: "400px",
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1480399129128-2066acb5009e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80)",
-          backgroundPosition: "center center",
-        }}
-      ></div>
-      <div className="mt-5 mb-7">
-        <div className="row">
-          <div className="col-md-6">
-            <h2>Checkout Success</h2>
-            <p>
-              Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-              nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam
-              erat, sed diam voluptua. At vero eos et accusam et justo duo
-              dolores et ea
-            </p>
-            <a
-              href="./index.html"
-              class="btn btn-outline-dark me-2 rounded-0 mb-4"
-            >
-              Back To Home
-            </a>
+    <div className="checkout-success-page py-5 bg-custom-light">
+      <div className="container py-5">
+        {/* 結帳進度條 */}
+        <div className="checkout-progress mb-5 px-md-5">
+          <div className="step completed">
+            <span className="step-num">1</span>
+            <span className="step-text">確認購物車</span>
           </div>
-          <div className="col-md-6">
-            <div className="card rounded-0 py-4">
-              <div className="card-header border-bottom-0 bg-white px-4 py-0">
-                <h2>Order Detail</h2>
+          <div className="step-line active"></div>
+          <div className="step completed">
+            <span className="step-num">2</span>
+            <span className="step-text">填寫資料</span>
+          </div>
+          <div className="step-line active"></div>
+          <div className="step active">
+            <span className="step-num">3</span>
+            <span className="step-text">訂單完成</span>
+          </div>
+        </div>
+
+        <div className="row justify-content-center">
+          <div className="col-md-8 col-lg-6">
+            <div className="card border-0 shadow-sm p-5 text-center rounded-4">
+              <div className="success-icon-wrapper mb-4">
+                <i
+                  className="bi bi-check-circle-fill text-success"
+                  style={{ fontSize: "5rem" }}
+                ></i>
               </div>
-              <div className="card-body px-4 py-0">
-                <ul className="list-group list-group-flush">
-                  <li className="list-group-item px-0">
-                    <div className="d-flex mt-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1502743780242-f10d2ce370f3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1916&q=80"
-                        alt=""
-                        className="me-2"
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          objectFit: "cover",
-                        }}
-                      />
-                      <div className="w-100 d-flex flex-column">
-                        <div className="d-flex justify-content-between fw-bold">
-                          <h5>Lorem ipsum</h5>
-                          <p className="mb-0">x10</p>
-                        </div>
-                        <div className="d-flex justify-content-between mt-auto">
-                          <p className="text-muted mb-0">
-                            <small>NT$12,000</small>
-                          </p>
-                          <p className="mb-0">NT$12,000</p>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li className="list-group-item px-0">
-                    <div className="d-flex mt-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1502743780242-f10d2ce370f3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1916&q=80"
-                        alt=""
-                        className="me-2"
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          objectFit: "cover",
-                        }}
-                      />
-                      <div className="w-100 d-flex flex-column">
-                        <div className="d-flex justify-content-between fw-bold">
-                          <h5>Lorem ipsum</h5>
-                          <p className="mb-0">x10</p>
-                        </div>
-                        <div className="d-flex justify-content-between mt-auto">
-                          <p className="text-muted mb-0">
-                            <small>NT$12,000</small>
-                          </p>
-                          <p className="mb-0">NT$12,000</p>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                  <li className="list-group-item px-0 pb-0">
-                    <table className="table text-muted">
-                      <tbody>
-                        <tr>
-                          <th
-                            scope="row"
-                            className="border-0 px-0 font-weight-normal"
-                          >
-                            Lorem ipsum
-                          </th>
-                          <td className="text-end border-0 px-0">NT$24,000</td>
-                        </tr>
-                        <tr>
-                          <th
-                            scope="row"
-                            className="border-0 px-0 pt-0 font-weight-normal"
-                          >
-                            Payment
-                          </th>
-                          <td className="text-end border-0 px-0 pt-0">
-                            ApplePay
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                    <div className="d-flex justify-content-between mt-2">
-                      <p className="mb-0 h4 fw-bold">Lorem ipsum</p>
-                      <p className="mb-0 h4 fw-bold">NT$24,000</p>
-                    </div>
-                  </li>
-                </ul>
+              <h2 className="fw-bold mb-3">訂單已成功提交</h2>
+              <p className="text-secondary mb-4 px-md-5">
+                感謝您的訂購！我們已收到您的訂單，正在為您準備精心挑選的香氣產品。
+              </p>
+
+              <div className="order-info-box bg-light-beige p-3 rounded-3 mb-5">
+                <p className="mb-1 text-secondary small">訂單編號</p>
+                <h4 className="fw-bold text-enso-gold mb-0">{orderNumber}</h4>
               </div>
+
+              <div className="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                <Link to="/" className="btn btn-outline-dark px-4 py-2">
+                  返回首頁
+                </Link>
+                <Link
+                  to="/products"
+                  className="btn btn-secondary px-4 py-2 text-white"
+                >
+                  繼續選購
+                </Link>
+              </div>
+            </div>
+
+            <div className="text-center mt-5 text-secondary">
+              <p className="small">
+                稍後將會寄送「訂單確認信」至您的電子郵件信箱。
+                <br />
+                如有任何疑問，歡迎隨時與我們的客服中心聯繫。
+              </p>
             </div>
           </div>
         </div>

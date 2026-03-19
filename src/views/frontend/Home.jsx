@@ -1,8 +1,13 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+
 import "bootstrap-icons/font/bootstrap-icons.css";
-import { Autoplay } from "swiper/modules";
-// Import Swiper styles
+import "swiper/css";
+import "swiper/css/pagination";
 import "../../assets/swiper.scss";
+
 import hero1 from "../../images/hero1.jpg";
 import hero2 from "../../images/hero2.jpg";
 import hero3 from "../../images/hero3.png";
@@ -10,8 +15,33 @@ import hero4 from "../../images/hero4.jpg";
 import iconMeditation from "../../images/冥想香氣.png";
 import iconRelaxation from "../../images/放鬆紓壓.png";
 import iconPurification from "../../images/空間淨化.png";
+import { getProductApi } from "../../services/product";
 
 export default function Home() {
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getProducts = async () => {
+      try {
+        const response = await getProductApi(1, "線香");
+        // 如果沒有線香分類，就拿全部
+        const products =
+          response.data.products.length > 0
+            ? response.data.products
+            : (await getProductApi(1, "all")).data.products;
+        setFeaturedProducts(products);
+      } catch (error) {
+        console.error("Fetch products error:", error);
+      }
+    };
+    getProducts();
+  }, []);
+
+  const handleViewDetail = (id) => {
+    navigate(`/product/${id}`);
+  };
+
   return (
     <>
       <header className="hero-header">
@@ -57,10 +87,12 @@ export default function Home() {
               <p className="mb-0">每一縷煙， 都是回歸自我的邀請</p>
             </div>
             <div className="d-flex gap-3">
-              <button className="btn btn-warning btn-hover-effect">
+              <Link to="/product" className="btn btn-warning btn-hover-effect">
                 立即選購
-              </button>
-              <button className="btn btn-outline-light">品牌故事</button>
+              </Link>
+              <Link to="/about" className="btn btn-outline-light">
+                品牌故事
+              </Link>
             </div>
           </section>
         </div>
@@ -154,6 +186,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
       {/* 精選線香 */}
       <section className="section-padding bg-custom-white section-featured">
         <div className="container">
@@ -163,36 +196,61 @@ export default function Home() {
             </span>
             <div className="d-flex align-items-center justify-content-between">
               <h2 className="collection-title mb-0">精選線香</h2>
-              <button className="btn btn-outline-dark btn-hover-effect px-4">
+              <Link
+                to="/products"
+                className="btn btn-outline-dark btn-hover-effect px-4 text-decoration-none"
+              >
                 查看更多
-              </button>
+              </Link>
             </div>
           </div>
 
-          {/* 精選線香卡片區 */}
-          <div className="row g-4 justify-content-center mb-5">
-            <div className="col-md-4">
-              <div className="card h-100 border-0 shadow-sm collection-card">
-                <img
-                  className="card-img-top"
-                  src="https://images.unsplash.com/photo-1608528577891-eb0559d1df64?q=80&w=1470&auto=format&fit=crop"
-                  style={{ height: "240px", objectFit: "cover" }}
-                  alt="香爐與線香"
-                />
-                <div className="card-body p-4 text-center">
-                  <h4 className="card-title fw-bold mb-3">晨霧之森</h4>
-                  <p className="card-text text-secondary mb-4">
-                    清晨森林的清新木質調，帶有些許露水氣息，適合早晨提神與喚醒身心。
-                  </p>
-                  <a
-                    href="#"
-                    className="btn btn-outline-dark btn-hover-effect w-100"
-                  >
-                    詳細介紹
-                  </a>
-                </div>
-              </div>
-            </div>
+          {/* 精選線香輪播區 */}
+          <div className="mb-5 featured-carousel">
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              className="featured-swiper"
+              spaceBetween={30}
+              slidesPerView={1}
+              loop={true}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              pagination={{ clickable: true }}
+              breakpoints={{
+                640: { slidesPerView: 1 },
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+              }}
+            >
+              {featuredProducts.map((product) => (
+                <SwiperSlide key={product.id}>
+                  <div className="card h-100 border-0 shadow-sm collection-card">
+                    <img
+                      className="card-img-top"
+                      src={product.imageUrl}
+                      style={{ height: "240px", objectFit: "cover" }}
+                      alt={product.title}
+                    />
+                    <div className="card-body p-4 text-center">
+                      <h4 className="card-title fw-bold mb-3">
+                        {product.title}
+                      </h4>
+                      <p className="card-text text-secondary mb-4 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <button
+                        onClick={() => handleViewDetail(product.id)}
+                        className="btn btn-outline-dark btn-hover-effect w-100"
+                      >
+                        詳細介紹
+                      </button>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
       </section>
