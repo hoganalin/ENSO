@@ -18,7 +18,7 @@ adminApi.interceptors.request.use(
   (config) => {
     const token = document.cookie
       .split("; ")
-      .find((row) => row.startsWith("token="))
+      .find((row) => row.startsWith("hexToken="))
       ?.split("=")[1];
     //如果有token就放在headers
     if (token) {

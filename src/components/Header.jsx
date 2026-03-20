@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router"; // 確保 useNavigate 被導入
 
 import logo from "../images/logo.png";
 
@@ -13,6 +13,31 @@ function Header() {
   useEffect(() => {
     dispatch(createAsyncGetCart());
   }, [dispatch]);
+  const [searchItem, setSearchItem] = useState("");
+  const navigate = useNavigate();
+
+  // 檢查是否已登入
+  const isLoggedIn = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("hexToken="));
+
+  const handleLogout = () => {
+    if (window.confirm("確定要登出嗎？")) {
+      document.cookie =
+        "hexToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      alert("已成功登出");
+      navigate("/");
+    }
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchItem.trim()) {
+      navigate(`/product?search=${searchItem.trim()}`);
+      setSearchItem(""); // 搜尋後清空
+    }
+  };
+
   return (
     <div className="bg-navbar">
       <div className="container">
@@ -29,13 +54,33 @@ function Header() {
           </Link>
 
           <div className="d-flex align-items-center ms-lg-3 me-3 me-lg-0 ms-auto order-lg-3">
-            <a href="#">
-              <i className="fa-solid fa-heart me-3"></i>
-            </a>
-            <Link to="/cart" className="position-relative d-inline-block">
+            {isLoggedIn ? (
+              <button
+                className="btn btn-link link-dark text-decoration-none p-0 me-4 d-flex align-items-center"
+                onClick={handleLogout}
+              >
+                <i className="fa-solid fa-right-from-bracket me-2"></i>
+                <span className="small">登出</span>
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="link-dark text-decoration-none me-4 d-flex align-items-center"
+              >
+                <i className="fa-regular fa-user me-2"></i>
+                <span className="small">登入</span>
+              </Link>
+            )}
+            <Link
+              to="/cart"
+              className="position-relative d-inline-block link-dark"
+            >
               <i className="fa-solid fa-cart-shopping"></i>
               {carts?.length > 0 && (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <span
+                  className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  style={{ fontSize: "0.6rem" }}
+                >
                   {carts?.length}
                 </span>
               )}
@@ -76,16 +121,24 @@ function Header() {
               </li>
             </ul>
 
-            <form className="d-flex" role="search">
-              <input
-                className="form-control me-2 "
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-success" type="submit">
-                Search
-              </button>
+            <form className="d-flex" role="search" onSubmit={handleSearch}>
+              <div className="input-group input-group-sm border rounded-pill overflow-hidden bg-white px-2">
+                <input
+                  className="form-control border-0 shadow-none bg-transparent"
+                  type="search"
+                  placeholder="搜尋產品名稱..."
+                  aria-label="Search"
+                  value={searchItem}
+                  onChange={(e) => setSearchItem(e.target.value)}
+                />
+                <button
+                  className="btn border-0 text-muted"
+                  type="submit"
+                  aria-label="Submit search"
+                >
+                  <i className="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </div>
             </form>
           </div>
         </nav>

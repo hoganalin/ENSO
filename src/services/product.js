@@ -8,6 +8,12 @@ export const getProductApi = (page, category) => {
     },
   });
 };
+// 另外一種寫法為
+// export const getProductApi = (page, category) => {
+//   return api.get(
+//     `/api/${API_PATH}/products?page=${page}&category=${category === "all" ? "" : category}`
+//   );
+// };
 
 export const getAllProductsApi = () => {
   return api.get(`/api/${API_PATH}/products/all`);

@@ -285,7 +285,7 @@ export default function Home() {
               <div className="row g-3">
                 {/* 左上 */}
                 <div className="col-6">
-                  <div className="story-feature-card bg-primary shadow-sm">
+                  <div className="story-feature-card bg-primary shadow-sm --natural">
                     <div className="emoji-icon">
                       <i className="bi bi-leaf"></i>
                     </div>
@@ -300,7 +300,7 @@ export default function Home() {
                 </div>
                 {/* 右上 */}
                 <div className="col-6">
-                  <div className="story-feature-card bg-light-beige shadow-sm">
+                  <div className="story-feature-card bg-light-beige shadow-sm --handmade">
                     <div className="emoji-icon">
                       <i className="bi bi-person-hearts"></i>
                     </div>
@@ -317,7 +317,7 @@ export default function Home() {
                 </div>
                 {/* 左下 */}
                 <div className="col-6">
-                  <div className="story-feature-card bg-light-beige shadow-sm">
+                  <div className="story-feature-card bg-light-beige shadow-sm --sustainability">
                     <div className="emoji-icon">
                       <i className="bi bi-globe2"></i>
                     </div>
@@ -334,7 +334,7 @@ export default function Home() {
                 </div>
                 {/* 右下 */}
                 <div className="col-6">
-                  <div className="story-feature-card bg-primary shadow-sm">
+                  <div className="story-feature-card bg-primary shadow-sm --delivery">
                     <div className="emoji-icon">
                       <i className="bi bi-truck"></i>
                     </div>

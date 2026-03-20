@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router"; // 加入 useSearchParams
 import { getProductApi } from "../services/product";
 import { createAsyncAddCart } from "../slice/cartSlice";
 import { RotatingLines } from "react-loader-spinner";
@@ -18,6 +18,8 @@ const Products = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { showSuccess, showError } = useMessage();
+  const [searchParams] = useSearchParams();
+  const searchTerm = searchParams.get("search") || ""; //看網址裡面有沒有一個叫做 search 的標籤，如果有，把它後面的內容抓給我。
 
   const handleAddCart = async (e, productId, qty = 1) => {
     e.preventDefault();
@@ -77,6 +79,12 @@ const Products = () => {
     getProducts(1, currentCategory);
   }, [currentCategory]);
 
+  const filteredProducts = products.filter(
+    (product) =>
+      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase()), //用來檢查字串裡面有沒有包含某個字段
+  );
+
   return (
     <>
       <div className="d-none d-md-block">
@@ -95,6 +103,7 @@ const Products = () => {
                 }}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
+                {/* charAt(0)把第一個字抓出來，toUpperCase()變成大寫，slice(1)把剩下的字抓出來 */}
               </a>
             ))}
           </div>
@@ -114,76 +123,112 @@ const Products = () => {
         </select>
       </div>
       <div className="container mt-md-5 mt-3 mb-7">
+        {searchTerm && (
+          <div className="d-flex align-items-center mb-4">
+            <h5 className="mb-0">
+              搜尋「<span className="text-primary">{searchTerm}</span>」的結果：
+            </h5>
+            <button
+              className="btn btn-sm btn-outline-secondary rounded-pill ms-3"
+              onClick={() => navigate("/product")}
+            >
+              清除搜尋
+            </button>
+          </div>
+        )}
         <div className="row g-4">
-          {products.map((product) => (
-            <div className="col-lg-3 col-md-4 col-sm-6" key={product.id}>
-              <div className="product-card">
-                <div className="product-img-wrapper">
-                  <img
-                    src={product.imageUrl}
-                    className="product-img"
-                    alt={product.title}
-                  />
-                  <div className="product-img-overlay">
-                    <button
-                      className="btn btn-light rounded-pill px-4 shadow-sm"
-                      onClick={(e) => handleViewDetail(e, product.id)}
-                      disabled={loadingProductId === product.id}
-                    >
-                      {loadingProductId === product.id ? (
-                        <RotatingLines
-                          strokeColor="grey"
-                          strokeWidth="5"
-                          animationDuration="0.75"
-                          width="16"
-                        />
-                      ) : (
-                        "查看詳情"
-                      )}
-                    </button>
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((product) => (
+              <div className="col-lg-3 col-md-4 col-sm-6" key={product.id}>
+                <div className="product-card">
+                  <div className="product-img-wrapper">
+                    <img
+                      src={product.imageUrl}
+                      className="product-img"
+                      alt={product.title}
+                    />
+                    <div className="product-img-overlay">
+                      <button
+                        className="btn btn-light rounded-pill px-4 shadow-sm"
+                        onClick={(e) => handleViewDetail(e, product.id)}
+                        disabled={loadingProductId === product.id}
+                      >
+                        {loadingProductId === product.id ? (
+                          <RotatingLines
+                            strokeColor="grey"
+                            strokeWidth="5"
+                            animationDuration="0.75"
+                            width="16"
+                          />
+                        ) : (
+                          "查看詳情"
+                        )}
+                      </button>
+                    </div>
+                    <div className="product-badge">精選</div>
                   </div>
-                  <div className="product-badge">精選</div>
-                </div>
-                <div className="product-content">
-                  <div className="product-category">{product.category}</div>
-                  <h4 className="product-title">
-                    <a
-                      href="#"
-                      onClick={(e) => handleViewDetail(e, product.id)}
-                    >
-                      {product.title}
-                    </a>
-                  </h4>
-                  <p className="product-desc">{product.description}</p>
-                  <div className="product-footer">
-                    <span className="product-price">
-                      NT$ {currency(product.price)}
-                    </span>
-                    <button
-                      className="btn btn-outline-primary btn-sm rounded-circle d-flex align-items-center justify-content-center"
-                      style={{ width: "40px", height: "40px", padding: 0 }}
-                      title="加入購物車"
-                      onClick={(e) => handleAddCart(e, product.id)}
-                      disabled={loadingCartId === product.id}
-                    >
-                      {loadingCartId === product.id ? (
-                        <RotatingLines
-                          strokeColor="#6a994e"
-                          strokeWidth="5"
-                          animationDuration="0.75"
-                          width="20"
-                        />
-                      ) : (
-                        <i className="fas fa-plus"></i>
-                      )}
-                    </button>
+                  <div className="product-content">
+                    <div className="product-category">{product.category}</div>
+                    <h4 className="product-title">
+                      <a
+                        href="#"
+                        onClick={(e) => handleViewDetail(e, product.id)}
+                      >
+                        {product.title}
+                      </a>
+                    </h4>
+                    <p className="product-desc">{product.description}</p>
+                    <div className="product-footer">
+                      <span className="product-price">
+                        NT$ {currency(product.price)}
+                      </span>
+                      <button
+                        className="btn btn-outline-primary btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                        style={{ width: "40px", height: "40px", padding: 0 }}
+                        title="加入購物車"
+                        onClick={(e) => handleAddCart(e, product.id)}
+                        disabled={loadingCartId === product.id}
+                      >
+                        {loadingCartId === product.id ? (
+                          <RotatingLines
+                            strokeColor="#6a994e"
+                            strokeWidth="5"
+                            animationDuration="0.75"
+                            width="20"
+                          />
+                        ) : (
+                          <i className="fas fa-plus"></i>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="col-12 text-center py-5">
+              <div className="mb-4">
+                <i
+                  className="fa-solid fa-magnifying-glass text-muted"
+                  style={{ fontSize: "3rem" }}
+                ></i>
+              </div>
+              <h4>找不到與「{searchTerm}」相關的產品</h4>
+              <p className="text-muted">
+                請嘗試其他關鍵字，或查看我們的全系列商品
+              </p>
+              <button
+                className="btn btn-primary rounded-pill px-4 mt-3"
+                onClick={() => navigate("/product")}
+              >
+                查看所有產品
+              </button>
             </div>
-          ))}
+          )}
         </div>
-        <Pagination pagination={pagination} onChangePage={getProducts} />
+        {filteredProducts.length > 0 && (
+          <Pagination pagination={pagination} onChangePage={getProducts} />
+        )}
       </div>
     </>
   );

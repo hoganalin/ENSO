@@ -91,27 +91,91 @@
 
 .story-feature-card {
   border-radius: 16px;
-  transition: transform 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   height: 100%;
   padding: 1.75rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  background-size: cover;
+  background-position: center;
+
+  // 遮罩層，確保文字可讀
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    transition: background 0.3s ease;
+  }
 
   &.bg-primary {
     background-color: $enso-brand-primary;
     color: $white;
+    &::before {
+      background: rgba($enso-brand-primary, 0.85);
+    }
   }
 
   &.bg-light-beige {
     background-color: #f1efe9;
     color: $enso-text-primary;
+    &::before {
+      background: rgba(#f1efe9, 0.9);
+    }
   }
 
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba($black, 0.15);
+    &::before {
+      background: rgba($black, 0.4);
+    }
+    color: $white !important;
+    .emoji-icon i,
+    h6,
+    p {
+      color: $white !important;
+    }
+  }
+
+  // 各別背景設定
+  &.--natural {
+    background-image: url("https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop");
+  }
+
+  &.--handmade {
+    background-image: url("https://images.unsplash.com/photo-1459156212016-c812468e2115?w=600&auto=format&fit=crop");
+  }
+
+  &.--sustainability {
+    background-image: url("https://tse3.mm.bing.net/th/id/OIP.3AGvpFYiZvjMSrqyFA2KHwHaE8?rs=1&pid=ImgDetMain&o=7&rm=3");
+  }
+
+  &.--delivery {
+    background-image: url("https://images.unsplash.com/photo-1549194388-f61be84a6e9e?q=80&w=600");
   }
 
   .emoji-icon {
     font-size: 1.5rem;
     margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  h6 {
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+  }
+
+  p {
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
   }
 }
 

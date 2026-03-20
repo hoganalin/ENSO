@@ -8,7 +8,9 @@ import SingleProduct from "../components/SingleProduct.jsx";
 import FrontendLayout from "../layout/FrontendLayout.jsx";
 import Home from "../views/frontend/Home.jsx";
 import Checkout from "../components/Checkout.jsx";
-import About from "../components/about.jsx";
+import About from "../components/About.jsx";
+import Login from "../components/Login.jsx";
+import Register from "../components/Register.jsx";
 export const routes = createHashRouter([
   {
     path: "/",
@@ -41,6 +43,14 @@ export const routes = createHashRouter([
       {
         path: "about",
         element: <About />,
+      },
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "register",
+        element: <Register />,
       },
     ],
   },
