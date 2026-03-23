@@ -5,10 +5,10 @@ function About() {
     <div className="about-page">
       <section className="about-hero">
         <div className="container text-center">
-          <span className="about-subtitle">OUR STORY</span>
-          <h1 className="about-title">香，是時間的藝術</h1>
-          <div className="about-divider"></div>
-          <p className="about-desc">
+          <span className="about-subtitle" data-aos="fade-down">OUR STORY</span>
+          <h1 className="about-title" data-aos="fade-up" data-aos-delay="100">香，是時間的藝術</h1>
+          <div className="about-divider" data-aos="zoom-in" data-aos-delay="200"></div>
+          <p className="about-desc" data-aos="fade-up" data-aos-delay="300">
             ENSO，圓相。代表著禪宗中「完整」與「空無」的共存。
             <br />
             我們相信，每一縷香煙，都是一次回歸當下的邀請。
@@ -38,7 +38,7 @@ function About() {
           <h2 className="about-section-title">品牌理念</h2>
           <div className="story-divider mx-auto"></div>
           <div className="row g-4 mt-4">
-            <div className="col-md-4">
+            <div className="col-md-4" data-aos="fade-up" data-aos-delay="100">
               <div className="philosophy-card card--nature">
                 <h4 className="philosophy-title">純淨天然</h4>
                 <p className="philosophy-text">
@@ -46,7 +46,7 @@ function About() {
                 </p>
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4" data-aos="fade-up" data-aos-delay="200">
               <div className="philosophy-card card--craft">
                 <h4 className="philosophy-title">職人工藝</h4>
                 <p className="philosophy-text">
@@ -54,7 +54,7 @@ function About() {
                 </p>
               </div>
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4" data-aos="fade-up" data-aos-delay="300">
               <div className="philosophy-card card--sustainability">
                 <h4 className="philosophy-title">永續承諾</h4>
                 <p className="philosophy-text">
@@ -71,7 +71,7 @@ function About() {
           <h2 className="about-section-title">品牌里程碑</h2>
           <div className="story-divider mx-auto"></div>
           <div className="timeline-wrapper">
-            <div className="timeline-item">
+            <div className="timeline-item" data-aos="fade-up">
               <div className="timeline-year">2018</div>
               <div className="timeline-dot"></div>
               <div className="timeline-content">
@@ -81,7 +81,7 @@ function About() {
                 </p>
               </div>
             </div>
-            <div className="timeline-item">
+            <div className="timeline-item" data-aos="fade-up">
               <div className="timeline-year">2020</div>
               <div className="timeline-dot"></div>
               <div className="timeline-content">
@@ -91,7 +91,7 @@ function About() {
                 </p>
               </div>
             </div>
-            <div className="timeline-item">
+            <div className="timeline-item" data-aos="fade-up">
               <div className="timeline-year">2022</div>
               <div className="timeline-dot"></div>
               <div className="timeline-content">
@@ -101,7 +101,7 @@ function About() {
                 </p>
               </div>
             </div>
-            <div className="timeline-item">
+            <div className="timeline-item" data-aos="fade-up">
               <div className="timeline-year">2024</div>
               <div className="timeline-dot"></div>
               <div className="timeline-content">

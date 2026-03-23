@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { Link } from "react-router";
 
+import { currency } from "../assets/utils/filter";
+import useMessage from "../hooks/useMessage";
 import {
+  createAsyncDeleteAllCart,
   createAsyncDeleteSingleCart,
   createAsyncUpdateCart,
-  createAsyncDeleteAllCart,
 } from "../slice/cartSlice";
-
-import useMessage from "../hooks/useMessage";
 
 function Cart() {
   const carts = useSelector((state) => state.cart.carts);
@@ -162,7 +162,7 @@ function Cart() {
                     </button>
                   </div>
                   <p className="mb-0 ms-auto text-gold fw-bold">
-                    NT${cartItem.total}
+                    NT${currency(cartItem.total)}
                   </p>
                 </div>
               </div>
@@ -172,7 +172,7 @@ function Cart() {
           <div className="d-flex justify-content-between mt-4 border-top pt-4">
             <p className="mb-0 h4 fw-bold">總計</p>
             <p className="mb-0 h4 fw-bold text-gold">
-              NT${carts.reduce((acc, item) => acc + item.total, 0)}
+              NT${currency(carts.reduce((acc, item) => acc + item.total, 0))}
             </p>
           </div>
           {carts.length === 0 ? (

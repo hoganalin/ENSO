@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
+import { RotatingLines } from "react-loader-spinner";
 import { useDispatch } from "react-redux";
 import { useNavigate, useSearchParams } from "react-router"; // 加入 useSearchParams
+
+import Pagination from "./Pagination";
+import useMessage from "../hooks/useMessage";
 import { getProductApi } from "../services/product";
 import { createAsyncAddCart } from "../slice/cartSlice";
-import { RotatingLines } from "react-loader-spinner";
 import { currency } from "../utils/filter";
-import useMessage from "../hooks/useMessage";
-import Pagination from "./Pagination";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -138,8 +139,13 @@ const Products = () => {
         )}
         <div className="row g-4">
           {filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <div className="col-lg-3 col-md-4 col-sm-6" key={product.id}>
+            filteredProducts.map((product, index) => (
+              <div
+                className="col-lg-3 col-md-4 col-sm-6"
+                key={product.id}
+                data-aos="fade-up"
+                data-aos-delay={(index % 4) * 100}
+              >
                 <div className="product-card">
                   <div className="product-img-wrapper">
                     <img

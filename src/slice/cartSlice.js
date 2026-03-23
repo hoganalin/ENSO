@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
 import {
   addCartApi,
-  deleteSingleCartApi,
   deleteAllCartApi,
+  deleteSingleCartApi,
   getCartApi,
   updateCartApi,
 } from "../services/cart";
@@ -67,7 +68,7 @@ export const createAsyncDeleteSingleCart = createAsyncThunk(
 // 清空全部購物車
 export const createAsyncDeleteAllCart = createAsyncThunk(
   "cart/createAsyncDeleteAllCart",
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { dispatch }) => {
     try {
       const response = await deleteAllCartApi();
       dispatch(createAsyncGetCart());

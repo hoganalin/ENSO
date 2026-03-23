@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 
+import useMessage from "../hooks/useMessage";
 import { getSingleProductApi } from "../services/product";
 import { createAsyncAddCart } from "../slice/cartSlice";
 import { currency } from "../utils/filter";
-import useMessage from "../hooks/useMessage";
 
 function SingleProduct() {
   const { id } = useParams();
@@ -49,7 +49,7 @@ function SingleProduct() {
     <div className="container single-product">
       <div className="row">
         {/* ========== 左側：圖片區 ========== */}
-        <div className="col-md-6">
+        <div className="col-md-6" data-aos="fade-right">
           <div className="single-product__gallery">
             {/* 主圖 */}
             <img
@@ -83,7 +83,7 @@ function SingleProduct() {
         </div>
 
         {/* ========== 右側：產品資訊 ========== */}
-        <div className="col-md-6 single-product__info">
+        <div className="col-md-6 single-product__info" data-aos="fade-left" data-aos-delay="100">
           {/* 分類 */}
           <div className="single-product__category">{product.category}</div>
 
@@ -207,7 +207,7 @@ function SingleProduct() {
       <section className="single-product__experience">
         <div className="container">
           <div className="row align-items-center">
-            <div className="col-md-5">
+            <div className="col-md-5" data-aos="fade-right">
               <div className="experience-content">
                 <span className="experience-subtitle">
                   THE SCENT EXPERIENCE
@@ -234,7 +234,7 @@ function SingleProduct() {
                 </div>
               </div>
             </div>
-            <div className="col-md-7">
+            <div className="col-md-7" data-aos="fade-left" data-aos-delay="200">
               <div className="experience-grid">
                 <div className="row g-4">
                   <div className="col-md-6">
@@ -275,7 +275,7 @@ function SingleProduct() {
       {/* ========== 使用方式 ========== */}
       <section className="single-product__how-to">
         <div className="container">
-          <div className="text-center mb-5">
+          <div className="text-center mb-5" data-aos="fade-up">
             <span className="how-to-subtitle">HOW TO USE</span>
             <h2 className="how-to-title">使用方式</h2>
             <div className="how-to-divider mx-auto"></div>
@@ -283,7 +283,7 @@ function SingleProduct() {
 
           <div className="how-to-steps-wrapper">
             <div className="row justify-content-center g-5">
-              <div className="col-md-4">
+              <div className="col-md-4" data-aos="fade-up" data-aos-delay="100">
                 <div className="step-item text-center">
                   <div className="step-number-badge">01</div>
                   <div
@@ -313,7 +313,7 @@ function SingleProduct() {
                   </p>
                 </div>
               </div>
-              <div className="col-md-4">
+              <div className="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div className="step-item text-center">
                   <div className="step-number-badge">02</div>
                   <div
@@ -343,7 +343,7 @@ function SingleProduct() {
                   </p>
                 </div>
               </div>
-              <div className="col-md-4">
+              <div className="col-md-4" data-aos="fade-up" data-aos-delay="300">
                 <div className="step-item text-center">
                   <div className="step-number-badge">03</div>
                   <div
@@ -376,7 +376,7 @@ function SingleProduct() {
             </div>
           </div>
 
-          <div className="how-to-notice mt-5">
+          <div className="how-to-notice mt-5" data-aos="fade-up">
             <div className="notice-content d-flex align-items-center">
               <span className="notice-icon">⚠️</span>
               <p className="notice-text mb-0">

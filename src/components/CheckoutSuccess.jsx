@@ -1,11 +1,10 @@
-import { useMemo } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 
 function CheckoutSuccess() {
-  // 使用 useMemo 確保重新渲染時訂單編號不會變動
-  const orderNumber = useMemo(
-    () => "ENSO" + Math.floor(Math.random() * 10000000),
-    [],
+  // 使用 useState 確保重新渲染時訂單編號不會變動且避免 impurity 錯誤
+  const [orderNumber] = useState(
+    () => "ENSO" + Math.floor(Math.random() * 10000000)
   );
 
   return (

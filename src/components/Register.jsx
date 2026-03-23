@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
 import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router";
+
+import Swal from "sweetalert2";
+
+import { emailValidation } from "../assets/utils/validation";
 
 const Register = () => {
   const {
@@ -26,11 +30,24 @@ const Register = () => {
       console.log("註冊資料：", data);
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert("註冊成功！歡迎加入 ENSO。");
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: "註冊成功！歡迎加入 ENSO。",
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+      });
       navigate("/login");
     } catch (error) {
       console.error(error);
-      alert("註冊發生錯誤，請稍後再試。");
+      Swal.fire({
+        icon: "error",
+        title: "註冊失敗",
+        text: "註冊發生錯誤，請稍後再試。",
+        confirmButtonColor: "#1a4636",
+      });
     } finally {
       setLoading(false);
     }
@@ -79,13 +96,7 @@ const Register = () => {
                       errors.email ? "is-invalid" : ""
                     }`}
                     placeholder="example@mail.com"
-                    {...register("email", {
-                      required: "Email 是必填的",
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "請輸入正確的 Email 格式",
-                      },
-                    })}
+                    {...register("email", emailValidation)}
                   />
                   {errors.email && (
                     <div className="invalid-feedback">

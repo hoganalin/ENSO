@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 function Footer() {
   return (
     <footer className="bg-dark text-light py-5 footer">
@@ -16,18 +18,32 @@ function Footer() {
             <div className="row g-4">
               <ul className="col-6 col-md-4">
                 <h3>商品</h3>
-                <li>線香系列</li>
-                <li>禮盒推薦</li>
+                <li>
+                  <Link to="/product" className="text-decoration-none text-light">
+                    線香系列
+                  </Link>
+                </li>
               </ul>
               <ul className="col-6 col-md-4">
                 <h3>品牌</h3>
-                <li>品牌故事</li>
-                <li>永續理念</li>
+                <li>
+                  <Link to="/about" className="text-decoration-none text-light">
+                    品牌故事
+                  </Link>
+                </li>
               </ul>
               <ul className="col-6 col-md-4">
                 <h3>服務</h3>
-                <li>常見問題</li>
-                <li>聯絡我們</li>
+                <li>
+                  <Link to="/faq" className="text-decoration-none text-light">
+                    常見問題
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/contact" className="text-decoration-none text-light">
+                    聯絡我們
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
