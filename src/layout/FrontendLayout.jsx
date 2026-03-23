@@ -5,6 +5,7 @@ import AOS from "aos";
 
 import "aos/dist/aos.css";
 
+import Breadcrumb from "../components/Breadcrumb";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
@@ -23,6 +24,7 @@ function FrontendLayout() {
   return (
     <>
       <Header />
+      <Breadcrumb />
       <main>
         <Outlet />
       </main>

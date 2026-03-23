@@ -83,7 +83,11 @@ function SingleProduct() {
         </div>
 
         {/* ========== 右側：產品資訊 ========== */}
-        <div className="col-md-6 single-product__info" data-aos="fade-left" data-aos-delay="100">
+        <div
+          className="col-md-6 single-product__info"
+          data-aos="fade-left"
+          data-aos-delay="100"
+        >
           {/* 分類 */}
           <div className="single-product__category">{product.category}</div>
 
@@ -145,9 +149,7 @@ function SingleProduct() {
             </div>
             <div className="spec-item">
               <span className="spec-label">香煙特性</span>
-              <span className="spec-value">
-                {product.smoke_type || "低煙配方"}
-              </span>
+              <span className="spec-value">{product.feature}</span>
             </div>
             <div className="spec-item">
               <span className="spec-label">每盒數量</span>
@@ -214,9 +216,7 @@ function SingleProduct() {
                 </span>
                 <h2 className="experience-title">香氣體驗</h2>
                 <div className="experience-divider"></div>
-                <p className="experience-desc">
-                  {product.description_full || product.description}
-                </p>
+                <p className="experience-desc">{product.content}</p>
 
                 <div className="experience-scenes">
                   <span className="scenes-label">適合場景</span>
