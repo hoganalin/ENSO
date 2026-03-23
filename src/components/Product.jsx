@@ -110,7 +110,7 @@ const Products = () => {
           </div>
         </nav>
       </div>
-      <div className="d-block d-md-none mb-4 px-3">
+      <div className="d-block d-md-none my-4 px-3">
         <select
           className="form-select rounded-pill"
           value={currentCategory}
@@ -141,7 +141,7 @@ const Products = () => {
           {filteredProducts.length > 0 ? (
             filteredProducts.map((product, index) => (
               <div
-                className="col-lg-3 col-md-4 col-sm-6"
+                className="col-6 col-md-4 col-lg-3"
                 key={product.id}
                 data-aos="fade-up"
                 data-aos-delay={(index % 4) * 100}

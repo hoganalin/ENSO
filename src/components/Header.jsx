@@ -59,7 +59,7 @@ function Header() {
   };
 
   return (
-    <div className="bg-navbar sticky-top shadow-sm">
+    <div className="bg-navbar  shadow-sm">
       <div className="container px-0 px-lg-3">
         <nav className="navbar navbar-expand-lg navbar-light py-3">
           {/* 1. Logo (左側) */}
@@ -130,7 +130,10 @@ function Header() {
           >
             <ul className="navbar-nav mb-2 mb-lg-0 mx-lg-4">
               <li className="nav-item">
-                <Link className="nav-link px-3 fw-medium text-dark" to="/product">
+                <Link
+                  className="nav-link px-3 fw-medium text-dark"
+                  to="/product"
+                >
                   線香商品
                 </Link>
               </li>
@@ -142,7 +145,11 @@ function Header() {
             </ul>
 
             {/* 搜尋框 (桌面版在中間/右側，行動版在摺疊清單內) */}
-            <form className="d-flex mt-3 mt-lg-0 px-3 px-lg-0" role="search" onSubmit={handleSearch}>
+            <form
+              className="d-flex mt-3 mt-lg-0 px-3 px-lg-0"
+              role="search"
+              onSubmit={handleSearch}
+            >
               <div className="input-group input-group-sm border rounded-pill overflow-hidden bg-white px-2 py-1 shadow-sm w-100">
                 <input
                   className="form-control border-0 shadow-none bg-transparent"
