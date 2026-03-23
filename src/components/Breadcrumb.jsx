@@ -24,7 +24,7 @@ const Breadcrumb = () => {
     <nav aria-label="breadcrumb" className="breadcrumb-wrapper container mt-4">
       <ol className="breadcrumb mb-0">
         <li className="breadcrumb-item">
-          <Link to="/">首頁</Link>
+          <Link to="/" aria-label="Go to Home page">首頁</Link>
         </li>
         {pathnames.map((value, index) => {
           const last = index === pathnames.length - 1;
@@ -44,7 +44,7 @@ const Breadcrumb = () => {
             </li>
           ) : (
             <li className="breadcrumb-item" key={to}>
-              <Link to={to}>{label}</Link>
+              <Link to={to} aria-label={`Go to ${label}`}>{label}</Link>
             </li>
           );
         })}

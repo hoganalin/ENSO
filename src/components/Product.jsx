@@ -98,13 +98,13 @@ const Products = () => {
                   currentCategory === category ? "active" : ""
                 }`}
                 href="#"
+                aria-label={`Filter by category: ${category}`}
                 onClick={(e) => {
                   e.preventDefault();
                   setCurrentCategory(category);
                 }}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
-                {/* charAt(0)把第一個字抓出來，toUpperCase()變成大寫，slice(1)把剩下的字抓出來 */}
               </a>
             ))}
           </div>
@@ -114,6 +114,7 @@ const Products = () => {
         <select
           className="form-select rounded-pill"
           value={currentCategory}
+          aria-label="Filter by category"
           onChange={(e) => setCurrentCategory(e.target.value)}
         >
           {categories.map((category) => (
@@ -132,6 +133,7 @@ const Products = () => {
             <button
               className="btn btn-sm btn-outline-secondary rounded-pill ms-3"
               onClick={() => navigate("/product")}
+              aria-label="Clear current search"
             >
               清除搜尋
             </button>
@@ -158,6 +160,7 @@ const Products = () => {
                         className="btn btn-light rounded-pill px-4 shadow-sm"
                         onClick={(e) => handleViewDetail(e, product.id)}
                         disabled={loadingProductId === product.id}
+                        aria-label={`View details for ${product.title}`}
                       >
                         {loadingProductId === product.id ? (
                           <RotatingLines

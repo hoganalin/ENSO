@@ -86,6 +86,7 @@ function Cart() {
                 type="button"
                 className="btn btn-outline-danger btn-sm px-3 rounded-pill"
                 onClick={handleDeleteAllCart}
+                aria-label="Clear all items from shopping cart"
               >
                 <i className="fas fa-trash-alt me-2"></i>
                 <small>清空全部</small>
@@ -110,6 +111,7 @@ function Cart() {
                   style={{ top: "12px", right: "12px", lineHeight: 1 }}
                   onClick={(e) => handleDeleteSingleCart(e, cartItem.id)}
                   disabled={loadingCartId === cartItem.id}
+                  aria-label={`Remove ${cartItem.product.title} from cart`}
                 >
                   {loadingCartId === cartItem.id ? (
                     <i className="fas fa-spinner fa-spin"></i>
@@ -128,6 +130,7 @@ function Cart() {
                       disabled={
                         cartItem.qty === 1 || loadingCartId === cartItem.id
                       }
+                      aria-label="Decrease quantity"
                       onClick={() =>
                         handleQtyChange(
                           cartItem.id,
@@ -142,10 +145,11 @@ function Cart() {
                         "−"
                       )}
                     </button>
-                    <input type="number" value={cartItem.qty} readOnly />
+                    <input type="number" value={cartItem.qty} aria-label="Quantity" readOnly />
                     <button
                       type="button"
                       disabled={loadingCartId === cartItem.id}
+                      aria-label="Increase quantity"
                       onClick={() =>
                         handleQtyChange(
                           cartItem.id,
@@ -187,6 +191,7 @@ function Cart() {
             <Link
               to="/checkout"
               className="btn btn-dark w-100 mt-4 rounded-3 py-3 fw-bold decoration-none text-white text-center d-block"
+              aria-label="Proceed to checkout"
             >
               確認結帳
             </Link>

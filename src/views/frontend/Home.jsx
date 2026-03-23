@@ -93,10 +93,10 @@ export default function Home() {
               <p className="mb-0">每一縷煙， 都是回歸自我的邀請</p>
             </div>
             <div className="d-flex gap-3">
-              <Link to="/product" className="btn btn-warning btn-hover-effect">
+              <Link to="/product" className="btn btn-warning btn-hover-effect" aria-label="Shop our incense products now">
                 立即選購
               </Link>
-              <Link to="/about" className="btn btn-outline-light">
+              <Link to="/about" className="btn btn-outline-light" aria-label="Read our brand story">
                 品牌故事
               </Link>
             </div>
@@ -207,6 +207,7 @@ export default function Home() {
               <Link
                 to="/product"
                 className="btn btn-outline-dark btn-hover-effect px-4 text-decoration-none"
+                aria-label="View more featured incense products"
               >
                 查看更多
               </Link>
@@ -251,6 +252,7 @@ export default function Home() {
                       <button
                         onClick={() => handleViewDetail(product.id)}
                         className="btn btn-outline-dark btn-hover-effect w-100"
+                        aria-label={`View detailed information for ${product.title}`}
                       >
                         詳細介紹
                       </button>

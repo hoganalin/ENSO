@@ -63,7 +63,7 @@ function Header() {
       <div className="container px-0 px-lg-3">
         <nav className="navbar navbar-expand-lg navbar-light py-3">
           {/* 1. Logo (左側) */}
-          <Link className="navbar-brand ms-3 ms-lg-0" to="/">
+          <Link className="navbar-brand ms-3 ms-lg-0" to="/" aria-label="Enso Incense Home">
             <div className="d-flex header-logo-wrapper">
               <img src={logo} alt="Enso logo" className="header-logo-image" />
               <div className="header-logo-text">
@@ -80,6 +80,7 @@ function Header() {
                 <button
                   className="btn btn-link link-dark text-decoration-none p-0 me-3 me-lg-4 d-flex align-items-center"
                   onClick={handleLogout}
+                  aria-label="Logout"
                 >
                   <i className="fa-solid fa-right-from-bracket fs-5"></i>
                   <span className="small d-none d-md-inline ms-2">登出</span>
@@ -88,6 +89,7 @@ function Header() {
                 <Link
                   to="/login"
                   className="link-dark text-decoration-none me-3 me-lg-4 d-flex align-items-center"
+                  aria-label="Login"
                 >
                   <i className="fa-regular fa-user fs-5"></i>
                   <span className="small d-none d-md-inline ms-2">登入</span>
@@ -96,6 +98,7 @@ function Header() {
               <Link
                 to="/cart"
                 className="position-relative d-flex align-items-center link-dark me-2 me-lg-0"
+                aria-label={`View shopping cart, ${cartTotalQty} items`}
               >
                 <i className="fa-solid fa-cart-shopping fs-5"></i>
                 {cartTotalQty > 0 && (
@@ -155,11 +158,15 @@ function Header() {
                   className="form-control border-0 shadow-none bg-transparent"
                   type="search"
                   placeholder="搜尋產品..."
-                  aria-label="Search"
+                  aria-label="Search items"
                   value={searchItem}
                   onChange={(e) => setSearchItem(e.target.value)}
                 />
-                <button className="btn border-0 text-muted" type="submit">
+                <button 
+                  className="btn border-0 text-muted" 
+                  type="submit"
+                  aria-label="Submit search"
+                >
                   <i className="fa-solid fa-magnifying-glass"></i>
                 </button>
               </div>

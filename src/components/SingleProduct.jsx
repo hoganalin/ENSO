@@ -161,23 +161,33 @@ function SingleProduct() {
           <div className="single-product__purchase-controls">
             <div className="d-flex gap-3 mb-3 ">
               <div className="single-product__qty-selector justify-content-center">
-                <button type="button" onClick={() => handleQtyChange(-1)}>
+                <button 
+                  type="button" 
+                  onClick={() => handleQtyChange(-1)}
+                  aria-label="Decrease quantity"
+                >
                   −
                 </button>
                 <input
                   type="number"
                   value={qty}
+                  aria-label="Quantity"
                   onChange={(e) =>
                     setQty(Math.max(1, parseInt(e.target.value) || 1))
                   }
                 />
-                <button type="button" onClick={() => handleQtyChange(1)}>
+                <button 
+                  type="button" 
+                  onClick={() => handleQtyChange(1)}
+                  aria-label="Increase quantity"
+                >
                   +
                 </button>
               </div>
               <button
                 className="single-product__add-cart-btn mb-0 mt-0 flex-grow-1"
                 onClick={handleAddCart}
+                aria-label={`Add ${product.title} to cart`}
               >
                 加入購物車
               </button>
@@ -186,6 +196,7 @@ function SingleProduct() {
             <a
               href="#"
               className="single-product__go-cart-btn"
+              aria-label="Go to shopping cart"
               onClick={(e) => {
                 e.preventDefault();
                 navigate("/cart");
