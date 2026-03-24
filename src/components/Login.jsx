@@ -35,7 +35,7 @@ const Login = () => {
 
       // 儲存 token 到 cookie，加上 path=/ 以確保全站可用
       document.cookie = `hexToken=${token}; expires=${new Date(expired)}; path=/;`;
-
+      // 登入成功後，右上角會彈出通知視窗
       Swal.fire({
         toast: true,
         position: "top-end",

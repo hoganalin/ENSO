@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useParams } from "react-router";
 
 function CheckoutSuccess() {
+  const { orderId } = useParams();
+
   // 使用 useState 確保重新渲染時訂單編號不會變動且避免 impurity 錯誤
   const [orderNumber] = useState(
-    () => "ENSO" + Math.floor(Math.random() * 10000000)
+    () => orderId || "ENSO" + Math.floor(Math.random() * 10000000),
   );
 
   return (
@@ -52,7 +54,7 @@ function CheckoutSuccess() {
                   返回首頁
                 </Link>
                 <Link
-                  to="/products"
+                  to="/product"
                   className="btn btn-secondary px-4 py-2 text-white"
                 >
                   繼續選購

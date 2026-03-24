@@ -3,9 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
 
 import { createOrderApi } from "../services/cart";
-import {
-  createAsyncGetCart,
-} from "../slice/cartSlice";
+import { createAsyncGetCart } from "../slice/cartSlice";
 
 function Checkout() {
   const navigate = useNavigate();
@@ -21,6 +19,14 @@ function Checkout() {
   } = useForm();
 
   const onFormSubmit = async (data) => {
+    //以下為data 格式
+    //     data = {
+    //   email: "user@example.com",
+    //   name: "王小明",
+    //   tel: "0912345678",
+    //   address: "台北市信義區...",
+    //   message: "請小心包裝"
+    // }
     const { name, email, tel, address, message } = data;
     const orderData = {
       user: {
@@ -33,11 +39,12 @@ function Checkout() {
     };
     try {
       //送出訂單, 發送一個 POST 請求到 /api/:apiPath/orders
-      await createOrderApi(orderData);
+      const res = await createOrderApi(orderData);
+      const orderId = res.data.orderId;
       // 結帳後重新整理購物車，讓狀態歸零
       dispatch(createAsyncGetCart());
       // 導向成功結帳頁面
-      navigate("/checkout-success");
+      navigate(`/checkout-success/${orderId}`);
       reset(); // 重置表單
     } catch (error) {
       console.error("結帳失敗：", error);

@@ -30,6 +30,7 @@ export const createAsyncGetCart = createAsyncThunk(
   async (_, { dispatch }) => {
     try {
       const response = await getCartApi();
+
       dispatch(updateCart(response.data.data));
     } catch (error) {
       console.log(error?.response || error.message);

@@ -39,7 +39,7 @@ export const routes = createHashRouter([
         element: <Checkout />,
       },
       {
-        path: "checkout-success",
+        path: "checkout-success/:orderId?",
         element: <CheckoutSuccess />,
       },
       {
