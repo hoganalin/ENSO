@@ -6,15 +6,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../../assets/swiper.scss";
-import hero1 from "../../images/hero1.jpg";
-import hero2 from "../../images/hero2.jpg";
-import hero3 from "../../images/hero3.png";
-import hero4 from "../../images/hero4.jpg";
 import iconMeditation from "../../images/冥想香氣.png";
 import iconRelaxation from "../../images/放鬆紓壓.png";
 import iconPurification from "../../images/空間淨化.png";
 
 import { getProductApi } from "../../services/product";
+import heroVideo from "../../videos/hero.webm";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -48,6 +45,8 @@ export default function Home() {
     <>
       <header className="hero-header">
         <div className="hero-header__bg" aria-hidden="true">
+          {/* Hero Swiper (暫時先註解，改用影片) */}
+          {/*
           <Swiper
             className="hero-header__swiper"
             modules={[Autoplay]}
@@ -72,6 +71,18 @@ export default function Home() {
               <img src={hero4} alt="" />
             </SwiperSlide>
           </Swiper>
+          */}
+
+          <video
+            className="hero-header__video"
+            autoPlay
+            muted
+            loop
+            playsInline
+          >
+            <source src={heroVideo} type="video/webm" />
+          </video>
+
           <div className="hero-header__overlay" />
         </div>
 
