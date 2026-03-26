@@ -7,7 +7,7 @@ function MessageToast() {
   const dispatch = useDispatch();
 
   return (
-    <div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 9999 }}>
+    <div className="message-toast-wrapper position-fixed top-0 end-0 p-3">
       {messages.map((message) => (
         <div
           className="toast show mt-2"

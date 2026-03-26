@@ -5,7 +5,13 @@ const Breadcrumb = () => {
   const location = useLocation();
 
   // 2. 把路徑切開，例如 "/product/abc" → ["product", "abc"]
-  const pathnames = location.pathname.split("/").filter((x) => x);
+  const rawPathnames = location.pathname.split("/").filter((x) => x);
+  // checkout-success/:orderId 會讓麵包屑多出一段訂單編號，這段通常不需要顯示
+  const pathnames = rawPathnames.filter(
+    (_, index) =>
+      !(index > 0 && rawPathnames[index - 1] === "checkout-success"),
+  );
+  //目前這段不是第一段」(index > 0) 且 前一段是 "checkout-success"則回傳false，過濾掉
 
   // 3️. 英文路徑 → 中文名稱 對照表
   const breadcrumbMap = {
