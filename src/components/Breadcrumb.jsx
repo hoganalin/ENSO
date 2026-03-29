@@ -11,7 +11,7 @@ const Breadcrumb = () => {
     (_, index) =>
       !(index > 0 && rawPathnames[index - 1] === "checkout-success"),
   );
-  //目前這段不是第一段」(index > 0) 且 前一段是 "checkout-success"則回傳false，過濾掉
+  //目前這段不是第一段」(index > 0) 且 前一段是 "checkout-success"則回傳false
 
   // 3️. 英文路徑 → 中文名稱 對照表
   const breadcrumbMap = {
