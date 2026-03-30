@@ -1,4 +1,17 @@
-function Pagination({ pagination, onChangePage }) {
+interface PaginationProps {
+  pagination: {
+    current_page: number;
+    has_next: boolean;
+    has_pre: boolean;
+    total_pages: number;
+  };
+  onChangePage: (page: number) => void; //不回傳東西，所以是 void
+}
+
+function Pagination({
+  pagination,
+  onChangePage,
+}: PaginationProps): JSX.Element {
   return (
     <nav aria-label="Page navigation ">
       <ul className="pagination justify-content-center">

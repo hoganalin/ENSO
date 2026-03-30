@@ -1,8 +1,8 @@
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { removeMessage } from "../slice/messageSlice";
 
-function MessageToast() {
+function MessageToast(): JSX.Element {
   const messages = useSelector((state) => state.message.messages);
   const dispatch = useDispatch();
 

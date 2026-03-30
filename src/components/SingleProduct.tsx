@@ -5,18 +5,21 @@ import { useNavigate, useParams } from "react-router";
 import useMessage from "../hooks/useMessage";
 import { getSingleProductApi } from "../services/product";
 import { createAsyncAddCart } from "../slice/cartSlice";
-import { currency } from "../utils/filter";
+import { currency } from "../assets/utils/filter";
+//引入interface
+import type { AppDispatch } from "../store/store";
+import type { Product } from "../types/product";
 
-function SingleProduct() {
+function SingleProduct(): JSX.Element {
   const { id } = useParams();
-  const [product, setProduct] = useState({ imagesUrl: [] });
+  const [product, setProduct] = useState<Product>({} as Product);
   const [qty, setQty] = useState(1);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { showSuccess, showError } = useMessage();
 
   useEffect(() => {
-    const getProduct = async (productId) => {
+    const getProduct = async (productId: string) => {
       try {
         const response = await getSingleProductApi(productId);
         setProduct(response.data.product);
@@ -30,7 +33,7 @@ function SingleProduct() {
   }, [id]);
 
   // 加入購物車
-  const handleAddCart = async (e) => {
+  const handleAddCart = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
       await dispatch(createAsyncAddCart({ id: product.id, qty })).unwrap();
@@ -41,7 +44,7 @@ function SingleProduct() {
   };
 
   // 數量增減
-  const handleQtyChange = (delta) => {
+  const handleQtyChange = (delta: number) => {
     setQty((prev) => Math.max(1, prev + delta));
   };
 
@@ -161,8 +164,8 @@ function SingleProduct() {
           <div className="single-product__purchase-controls">
             <div className="d-flex gap-3 mb-3 ">
               <div className="single-product__qty-selector justify-content-center">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => handleQtyChange(-1)}
                   aria-label="Decrease quantity"
                 >
@@ -176,8 +179,8 @@ function SingleProduct() {
                     setQty(Math.max(1, parseInt(e.target.value) || 1))
                   }
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   onClick={() => handleQtyChange(1)}
                   aria-label="Increase quantity"
                 >

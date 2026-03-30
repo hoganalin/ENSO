@@ -9,7 +9,7 @@ import Breadcrumb from "../components/Breadcrumb";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-function FrontendLayout() {
+function FrontendLayout(): JSX.Element {
   const location = useLocation();
 
   useEffect(() => {

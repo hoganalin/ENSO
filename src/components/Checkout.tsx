@@ -1,24 +1,31 @@
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
-
+import type { RootState, AppDispatch } from "../store/store";
 import { createOrderApi } from "../services/cart";
 import { createAsyncGetCart } from "../slice/cartSlice";
 
-function Checkout() {
+interface CheckoutFormData {
+  email: string;
+  name: string;
+  tel: string;
+  address: string;
+  message: string;
+}
+function Checkout(): JSX.Element {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const carts = useSelector((state) => state.cart.carts);
-  const totalPrice = useSelector((state) => state.cart.final_total); // 總價
+  const dispatch = useDispatch<AppDispatch>();
+  const carts = useSelector((state: RootState) => state.cart.carts);
+  const totalPrice = useSelector((state: RootState) => state.cart.final_total); // 總價
   //useForm
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm<CheckoutFormData>();
 
-  const onFormSubmit = async (data) => {
+  const onFormSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
     //以下為data 格式
     //     data = {
     //   email: "user@example.com",

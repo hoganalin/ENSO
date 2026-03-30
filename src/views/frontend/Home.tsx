@@ -15,9 +15,11 @@ import heroVideo from "../../videos/hero.webm";
 
 import "swiper/css";
 import "swiper/css/pagination";
+//引入型別
+import type { Product } from "../../types/product";
 
-export default function Home() {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
+export default function Home(): JSX.Element {
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function Home() {
     getProducts();
   }, []);
 
-  const handleViewDetail = (id) => {
+  const handleViewDetail = (id: string) => {
     navigate(`/product/${id}`);
   };
 
@@ -73,13 +75,7 @@ export default function Home() {
           </Swiper>
           */}
 
-          <video
-            className="hero-header__video"
-            autoPlay
-            muted
-            loop
-            playsInline
-          >
+          <video className="hero-header__video" autoPlay muted loop playsInline>
             <source src={heroVideo} type="video/webm" />
           </video>
 
@@ -87,7 +83,7 @@ export default function Home() {
         </div>
 
         <div className="container hero-header__inner">
-          <section 
+          <section
             className="hero-header__content d-flex flex-column align-items-center text-center"
             data-aos="fade-up"
             data-aos-duration="1000"
@@ -104,10 +100,18 @@ export default function Home() {
               <p className="mb-0">每一縷煙， 都是回歸自我的邀請</p>
             </div>
             <div className="d-flex gap-3">
-              <Link to="/product" className="btn btn-warning btn-hover-effect" aria-label="Shop our incense products now">
+              <Link
+                to="/product"
+                className="btn btn-warning btn-hover-effect"
+                aria-label="Shop our incense products now"
+              >
                 立即選購
               </Link>
-              <Link to="/about" className="btn btn-outline-light" aria-label="Read our brand story">
+              <Link
+                to="/about"
+                className="btn btn-outline-light"
+                aria-label="Read our brand story"
+              >
                 品牌故事
               </Link>
             </div>
@@ -226,7 +230,11 @@ export default function Home() {
           </div>
 
           {/* 精選線香輪播區 */}
-          <div className="mb-5 featured-carousel" data-aos="fade-up" data-aos-delay="100">
+          <div
+            className="mb-5 featured-carousel"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
             <Swiper
               modules={[Autoplay, Pagination]}
               className="featured-swiper"
@@ -302,7 +310,11 @@ export default function Home() {
             </div>
 
             {/* 右半邊: 2x2 Card Grid */}
-            <div className="col-12 col-md-6" data-aos="fade-left" data-aos-delay="200">
+            <div
+              className="col-12 col-md-6"
+              data-aos="fade-left"
+              data-aos-delay="200"
+            >
               <div className="row g-3">
                 {/* 左上 */}
                 <div className="col-6">

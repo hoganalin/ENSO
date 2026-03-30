@@ -1,18 +1,18 @@
 import { createHashRouter } from "react-router";
 
-import About from "../components/About.jsx";
-import Cart from "../components/Cart.jsx";
-import Checkout from "../components/Checkout.jsx";
-import CheckoutSuccess from "../components/CheckoutSuccess.jsx";
-import Contact from "../components/Contact.jsx";
-import FAQ from "../components/FAQ.jsx";
-import Login from "../components/Login.jsx";
-import NotFound from "../components/NotFound.jsx";
-import Products from "../components/Product.jsx";
-import Register from "../components/Register.jsx";
-import SingleProduct from "../components/SingleProduct.jsx";
-import FrontendLayout from "../layout/FrontendLayout.jsx";
-import Home from "../views/frontend/Home.jsx";
+import About from "../components/About";
+import Cart from "../components/Cart";
+import Checkout from "../components/Checkout";
+import CheckoutSuccess from "../components/CheckoutSuccess";
+import Contact from "../components/Contact";
+import FAQ from "../components/FAQ";
+import Login from "../components/Login";
+import NotFound from "../components/NotFound";
+import Products from "../components/Product";
+import Register from "../components/Register";
+import SingleProduct from "../components/SingleProduct";
+import FrontendLayout from "../layout/FrontendLayout";
+import Home from "../views/frontend/Home";
 export const routes = createHashRouter([
   {
     path: "/",

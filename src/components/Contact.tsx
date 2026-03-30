@@ -1,21 +1,27 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 import { emailValidation } from "../assets/utils/validation";
-
-const Contact = () => {
+interface ContactFormData {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+const Contact = (): JSX.Element => {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<ContactFormData>({
     mode: "onTouched",
   });
 
   const [submitted, setSubmitted] = useState(false);
 
-  const onSubmit = async (data) => {
+  //一個接收 ContactFormData 作為參數的表單送出函式
+  const onSubmit: SubmitHandler<ContactFormData> = async (data) => {
     console.log("聯絡表單資料：", data);
     setSubmitted(true);
     // 模擬傳送資料

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 
-const Breadcrumb = () => {
+const Breadcrumb = (): JSX.Element | null => {
   // 1. 取得目前的 URL
   const location = useLocation();
 
@@ -14,7 +14,7 @@ const Breadcrumb = () => {
   //目前這段不是第一段」(index > 0) 且 前一段是 "checkout-success"則回傳false
 
   // 3️. 英文路徑 → 中文名稱 對照表
-  const breadcrumbMap = {
+  const breadcrumbMap: Record<string, string> = {
     product: "所有產品",
     cart: "購物車",
     checkout: "結帳流程",

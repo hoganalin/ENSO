@@ -1,13 +1,21 @@
 import { Link } from "react-router";
 
-function About() {
+function About(): JSX.Element {
   return (
     <div className="about-page">
       <section className="about-hero">
         <div className="container text-center">
-          <span className="about-subtitle" data-aos="fade-down">OUR STORY</span>
-          <h1 className="about-title" data-aos="fade-up" data-aos-delay="100">香，是時間的藝術</h1>
-          <div className="about-divider" data-aos="zoom-in" data-aos-delay="200"></div>
+          <span className="about-subtitle" data-aos="fade-down">
+            OUR STORY
+          </span>
+          <h1 className="about-title" data-aos="fade-up" data-aos-delay="100">
+            香，是時間的藝術
+          </h1>
+          <div
+            className="about-divider"
+            data-aos="zoom-in"
+            data-aos-delay="200"
+          ></div>
           <p className="about-desc" data-aos="fade-up" data-aos-delay="300">
             ENSO，圓相。代表著禪宗中「完整」與「空無」的共存。
             <br />

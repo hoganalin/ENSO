@@ -8,13 +8,32 @@ import {
   updateCartApi,
 } from "../services/cart";
 
+interface CartItem {
+  id: string;
+  product_id: string;
+  qty: number;
+  product: {
+    id: string;
+    title: string;
+    price: number;
+    imageUrl: string;
+  };
+}
+
+interface CartState {
+  carts: CartItem[];
+  total: number;
+  final_total: number;
+}
+
+const initialState: CartState = {
+  carts: [],
+  total: 0,
+  final_total: 0,
+};
 const cartSlice = createSlice({
   name: "cart",
-  initialState: {
-    carts: [],
-    total: 0,
-    final_total: 0,
-  },
+  initialState,
   reducers: {
     updateCart: (state, action) => {
       state.carts = action.payload.carts;
@@ -41,7 +60,7 @@ export const createAsyncGetCart = createAsyncThunk(
 // 新增商品至購物車
 export const createAsyncAddCart = createAsyncThunk(
   "cart/createAsyncAddCart",
-  async ({ id, qty = 1 }, { dispatch }) => {
+  async ({ id, qty = 1 }: { id: string; qty?: number }, { dispatch }) => {
     try {
       await addCartApi({ product_id: id, qty });
       // 新增成功後重新取得最新購物車狀態
@@ -55,7 +74,7 @@ export const createAsyncAddCart = createAsyncThunk(
 // 刪除購物車單一商品
 export const createAsyncDeleteSingleCart = createAsyncThunk(
   "cart/createAsyncDeleteSingleCart",
-  async (id, { dispatch }) => {
+  async (id: string, { dispatch }) => {
     try {
       await deleteSingleCartApi(id);
       // 刪除後重新取得購物車狀態以同步畫面
@@ -83,7 +102,10 @@ export const createAsyncDeleteAllCart = createAsyncThunk(
 // 更新/修改購物車中產品的數量
 export const createAsyncUpdateCart = createAsyncThunk(
   "cart/createAsyncUpdateCart",
-  async ({ id, product_id, qty }, { dispatch }) => {
+  async (
+    { id, product_id, qty }: { id: string; product_id: string; qty: number },
+    { dispatch },
+  ) => {
     try {
       await updateCartApi(id, { product_id, qty });
       // 更新後同步最新金額與品項資料

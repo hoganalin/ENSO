@@ -1,18 +1,23 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 
 import Swal from "sweetalert2";
 
 import { emailValidation } from "../assets/utils/validation";
-
-const Register = () => {
+interface RegisterFormData {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+const Register = (): JSX.Element => {
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<RegisterFormData>({
     mode: "onTouched", // 離開欄位時即觸發驗證
   });
 
@@ -22,7 +27,7 @@ const Register = () => {
   // 監控「設定密碼」欄位的值，用來做二次確認的比對
   const passwordValue = watch("password");
 
-  const onSubmit = async (data) => {
+  const onSubmit: SubmitHandler<RegisterFormData> = async (data) => {
     setLoading(true);
     try {
       //沒有註冊 API 可使用

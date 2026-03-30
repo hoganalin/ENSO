@@ -1,8 +1,8 @@
 import { RouterProvider } from "react-router";
 
-import MessageToast from "./components/MessageToast";
-import routes from "./router/index.jsx";
-function App() {
+import MessageToast from "./components/MessageToast.js";
+import routes from "./router/index.js";
+function App(): JSX.Element {
   return (
     <>
       <MessageToast />

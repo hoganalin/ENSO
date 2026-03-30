@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
-
+import type { RootState, AppDispatch } from "../store/store";
 import Swal from "sweetalert2";
 
 import logo from "../images/logo.png";
 
 import { createAsyncGetCart } from "../slice/cartSlice";
 
-function Header() {
-  const carts = useSelector((state) => state.cart.carts);
-  const dispatch = useDispatch();
+function Header(): JSX.Element {
+  const carts = useSelector((state: RootState) => state.cart.carts);
+  const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(createAsyncGetCart());
   }, [dispatch]);
@@ -50,7 +50,9 @@ function Header() {
     });
   };
 
-  const handleSearch = (e) => {
+  //<HTMLFormElement> 為泛型，告訴 React「這個事件來自哪種 HTML 元素」
+  //React.FormEvent<HTMLFormElement>   // 表單元素
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (searchItem.trim()) {
       navigate(`/product?search=${searchItem.trim()}`);
@@ -63,7 +65,11 @@ function Header() {
       <div className="container px-0 px-lg-3">
         <nav className="navbar navbar-expand-lg navbar-light py-3">
           {/* 1. Logo (左側) */}
-          <Link className="navbar-brand ms-3 ms-lg-0" to="/" aria-label="Enso Incense Home">
+          <Link
+            className="navbar-brand ms-3 ms-lg-0"
+            to="/"
+            aria-label="Enso Incense Home"
+          >
             <div className="d-flex header-logo-wrapper">
               <img src={logo} alt="Enso logo" className="header-logo-image" />
               <div className="header-logo-text">
@@ -162,8 +168,8 @@ function Header() {
                   value={searchItem}
                   onChange={(e) => setSearchItem(e.target.value)}
                 />
-                <button 
-                  className="btn border-0 text-muted" 
+                <button
+                  className="btn border-0 text-muted"
                   type="submit"
                   aria-label="Submit search"
                 >

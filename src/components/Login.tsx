@@ -1,25 +1,29 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
-
 import Swal from "sweetalert2";
 
 import { emailValidation } from "../assets/utils/validation";
 import { adminApi } from "../services/api";
 
-const Login = () => {
+interface LoginFormData {
+  email: string;
+  password: string;
+}
+const Login = (): JSX.Element => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<LoginFormData>({
     mode: "onTouched",
   });
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
+  //一個接收 LoginFormData 作為參數的表單送出函式
+  const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     setLoading(true);
 
     // 後端 API 預期的是 username 欄位來接收 email

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
+import type { RootState, AppDispatch } from "../store/store";
 
 import { currency } from "../assets/utils/filter";
 import useMessage from "../hooks/useMessage";
@@ -10,13 +11,16 @@ import {
   createAsyncUpdateCart,
 } from "../slice/cartSlice";
 
-function Cart() {
-  const carts = useSelector((state) => state.cart.carts);
-  const dispatch = useDispatch();
+function Cart(): JSX.Element {
+  const carts = useSelector((state: RootState) => state.cart.carts);
+  const dispatch = useDispatch<AppDispatch>();
   const { showSuccess, showError } = useMessage();
   const [loadingCartId, setLoadingCartId] = useState("");
 
-  const handleDeleteSingleCart = async (e, id) => {
+  const handleDeleteSingleCart = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: string,
+  ) => {
     e.preventDefault();
     setLoadingCartId(id);
     try {
@@ -29,7 +33,9 @@ function Cart() {
     }
   };
 
-  const handleDeleteAllCart = async (e) => {
+  const handleDeleteAllCart = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) => {
     e.preventDefault();
     try {
       await dispatch(createAsyncDeleteAllCart()).unwrap();
@@ -40,7 +46,11 @@ function Cart() {
   };
 
   // 數量增減：接收購物車ID, 產品ID 與新數量
-  const handleQtyChange = async (cartId, productId, qty) => {
+  const handleQtyChange = async (
+    cartId: string,
+    productId: string,
+    qty: number,
+  ) => {
     setLoadingCartId(cartId);
     try {
       await dispatch(
@@ -145,7 +155,12 @@ function Cart() {
                         "−"
                       )}
                     </button>
-                    <input type="number" value={cartItem.qty} aria-label="Quantity" readOnly />
+                    <input
+                      type="number"
+                      value={cartItem.qty}
+                      aria-label="Quantity"
+                      readOnly
+                    />
                     <button
                       type="button"
                       disabled={loadingCartId === cartItem.id}

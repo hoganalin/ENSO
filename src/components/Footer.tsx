@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-function Footer() {
+function Footer(): JSX.Element {
   return (
     <footer className="bg-dark text-light py-5 footer">
       <div className="container ">
@@ -19,7 +19,10 @@ function Footer() {
               <ul className="col-6 col-md-4">
                 <h3>商品</h3>
                 <li>
-                  <Link to="/product" className="text-decoration-none text-light">
+                  <Link
+                    to="/product"
+                    className="text-decoration-none text-light"
+                  >
                     線香系列
                   </Link>
                 </li>
@@ -40,7 +43,10 @@ function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contact" className="text-decoration-none text-light">
+                  <Link
+                    to="/contact"
+                    className="text-decoration-none text-light"
+                  >
                     聯絡我們
                   </Link>
                 </li>

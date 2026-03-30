@@ -7,22 +7,35 @@ import Pagination from "./Pagination";
 import useMessage from "../hooks/useMessage";
 import { getProductApi } from "../services/product";
 import { createAsyncAddCart } from "../slice/cartSlice";
-import { currency } from "../utils/filter";
+import { currency } from "../assets/utils/filter";
 
-const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+import type { AppDispatch } from "../store/store";
+import type { Product } from "../types/product";
+//分頁的型別
+interface Pagination {
+  total_pages: number;
+  current_page: number;
+  has_next: boolean;
+  has_pre: boolean;
+}
+const Products = (): JSX.Element => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [currentCategory, setCurrentCategory] = useState("all");
-  const [loadingCartId, setLoadingCartId] = useState(null);
-  const [loadingProductId, setLoadingProductId] = useState(null);
-  const [pagination, setPagination] = useState({});
+  const [loadingCartId, setLoadingCartId] = useState<string | null>(null);
+  const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<Pagination>({} as Pagination); // 斷言, 確定之後會填入資料，但初始值暫時不完整時。例如這裡的 pagination 一開始是空的，但 API 回來後就會填滿。
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { showSuccess, showError } = useMessage();
   const [searchParams] = useSearchParams();
   const searchTerm = searchParams.get("search") || ""; //看網址裡面有沒有一個叫做 search 的標籤，如果有，把它後面的內容抓給我。
 
-  const handleAddCart = async (e, productId, qty = 1) => {
+  const handleAddCart = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    productId: string,
+    qty = 1,
+  ) => {
     e.preventDefault();
     setLoadingCartId(productId);
     try {
@@ -36,7 +49,10 @@ const Products = () => {
     }
   };
 
-  const handleViewDetail = async (e, productId) => {
+  const handleViewDetail = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    productId: string,
+  ) => {
     e.preventDefault();
     setLoadingProductId(productId);
     try {

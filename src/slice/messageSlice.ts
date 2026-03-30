@@ -1,10 +1,19 @@
-import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
-
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+interface Message {
+  id: number;
+  type: string;
+  title: string;
+  text: string;
+}
+interface MessageState {
+  messages: Message[];
+}
+const initialState: MessageState = {
+  messages: [],
+};
 const messageSlice = createSlice({
   name: "message",
-  initialState: {
-    messages: [],
-  },
+  initialState,
   reducers: {
     addMessage: (state, action) => {
       const { id, success, message } = action.payload;
@@ -28,7 +37,7 @@ const messageSlice = createSlice({
 
 export const createAsyncAddMessage = createAsyncThunk(
   "message/createAsyncAddMessage",
-  async (payload, { dispatch }) => {
+  async (payload: { success: boolean; message: string }, { dispatch }) => {
     const id = Date.now();
     dispatch(
       addMessage({

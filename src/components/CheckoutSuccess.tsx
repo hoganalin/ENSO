@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router";
 
-function CheckoutSuccess() {
+function CheckoutSuccess(): JSX.Element {
   const { orderId } = useParams();
 
   // 使用 useState 確保重新渲染時訂單編號不會變動且避免 impurity 錯誤
