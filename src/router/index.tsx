@@ -13,6 +13,7 @@ import Register from "../components/Register";
 import SingleProduct from "../components/SingleProduct";
 import FrontendLayout from "../layout/FrontendLayout";
 import Home from "../views/frontend/Home";
+
 export const routes = createHashRouter([
   {
     path: "/",

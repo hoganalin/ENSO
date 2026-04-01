@@ -43,7 +43,6 @@ const cartSlice = createSlice({
   },
 });
 
-// 取得購物車內容清單
 export const createAsyncGetCart = createAsyncThunk(
   "cart/createAsyncGetCart",
   async (_, { dispatch }) => {
@@ -57,13 +56,11 @@ export const createAsyncGetCart = createAsyncThunk(
   },
 );
 
-// 新增商品至購物車
 export const createAsyncAddCart = createAsyncThunk(
   "cart/createAsyncAddCart",
   async ({ id, qty = 1 }: { id: string; qty?: number }, { dispatch }) => {
     try {
       await addCartApi({ product_id: id, qty });
-      // 新增成功後重新取得最新購物車狀態
       dispatch(createAsyncGetCart());
     } catch (error) {
       console.log(error?.response || error.message);
@@ -71,13 +68,11 @@ export const createAsyncAddCart = createAsyncThunk(
   },
 );
 
-// 刪除購物車單一商品
 export const createAsyncDeleteSingleCart = createAsyncThunk(
   "cart/createAsyncDeleteSingleCart",
   async (id: string, { dispatch }) => {
     try {
       await deleteSingleCartApi(id);
-      // 刪除後重新取得購物車狀態以同步畫面
       dispatch(createAsyncGetCart());
     } catch (error) {
       console.log(error?.response || error.message);
@@ -85,7 +80,6 @@ export const createAsyncDeleteSingleCart = createAsyncThunk(
   },
 );
 
-// 清空全部購物車
 export const createAsyncDeleteAllCart = createAsyncThunk(
   "cart/createAsyncDeleteAllCart",
   async (_, { dispatch }) => {
@@ -99,7 +93,6 @@ export const createAsyncDeleteAllCart = createAsyncThunk(
   },
 );
 
-// 更新/修改購物車中產品的數量
 export const createAsyncUpdateCart = createAsyncThunk(
   "cart/createAsyncUpdateCart",
   async (
@@ -108,7 +101,6 @@ export const createAsyncUpdateCart = createAsyncThunk(
   ) => {
     try {
       await updateCartApi(id, { product_id, qty });
-      // 更新後同步最新金額與品項資料
       dispatch(createAsyncGetCart());
     } catch (error) {
       console.log(error?.response || error.message);

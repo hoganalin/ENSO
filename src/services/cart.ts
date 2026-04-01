@@ -39,8 +39,8 @@ export const updateCartApi = (
   });
 };
 
-export const createOrderApi = (data) => {
+export const createOrderApi = (data: unknown) => {
   return api.post(`/api/${API_PATH}/order`, {
-    data: data,
+    data,
   });
 };

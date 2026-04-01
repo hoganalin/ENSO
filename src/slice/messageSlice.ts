@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 interface Message {
   id: number;
-  type: string;
+  type: "success" | "danger";
   title: string;
   text: string;
 }

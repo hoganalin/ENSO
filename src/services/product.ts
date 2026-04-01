@@ -1,6 +1,6 @@
 ﻿import { adminApi, api, API_PATH } from "./api";
 
-export const getProductApi = (page, category) => {
+export const getProductApi = (page: number, category: string) => {
   return api.get(`/api/${API_PATH}/products`, {
     params: {
       page,
@@ -8,18 +8,12 @@ export const getProductApi = (page, category) => {
     },
   });
 };
-// 另外一種寫法為
-// export const getProductApi = (page, category) => {
-//   return api.get(
-//     `/api/${API_PATH}/products?page=${page}&category=${category === "all" ? "" : category}`
-//   );
-// };
 
 export const getAllProductsApi = () => {
   return api.get(`/api/${API_PATH}/products/all`);
 };
 
-export const getSingleProductApi = (id) => {
+export const getSingleProductApi = (id: string) => {
   return api.get(`/api/${API_PATH}/product/${id}`);
 };
 
