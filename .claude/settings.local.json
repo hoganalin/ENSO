@@ -1,7 +1,27 @@
 {
   "permissions": {
     "allow": [
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(xdg-open /home/rogan/.claude/usage-data/report.html)",
+      "Bash(wslview /home/rogan/.claude/usage-data/report.html)",
+      "Skill(update-config)",
+      "Bash(node:*)",
+      "Bash(npm test:*)",
+      "Bash(npx tsc:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx tsc --noEmit 2>&1 | head -20 || true",
+            "statusMessage": "TypeScript 型別檢查中..."
+          }
+        ]
+      }
     ]
   }
 }

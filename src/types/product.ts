@@ -17,4 +17,5 @@ export interface Product {
   feature: string;
   eng_title?: string;
   burning_time?: string;
+  inventory?: number;
 }

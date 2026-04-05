@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router";
 import type { RootState, AppDispatch } from "../store/store";
+import { logout as logoutAction } from "../slice/authSlice";
 import Swal from "sweetalert2";
 
 import logo from "../images/logo.png";
@@ -21,10 +22,10 @@ function Header(): JSX.Element {
   const [searchItem, setSearchItem] = useState("");
   const navigate = useNavigate();
 
-  // 檢查是否已登入
-  const isLoggedIn = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("hexToken="));
+  // 從 Redux 判斷是否已登入
+  const isLoggedIn = useSelector(
+    (state: RootState) => state.auth.isAuthenticated,
+  );
 
   const handleLogout = () => {
     Swal.fire({
@@ -39,6 +40,8 @@ function Header(): JSX.Element {
       if (result.isConfirmed) {
         document.cookie =
           "hexToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        localStorage.removeItem("auth");
+        dispatch(logoutAction());
         Swal.fire({
           title: "已成功登出",
           icon: "success",

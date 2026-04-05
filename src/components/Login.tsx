@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { Link, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 
 import { emailValidation } from "../assets/utils/validation";
 import { adminApi } from "../services/api";
+import { loginSuccess } from "../slice/authSlice";
+import type { AppDispatch } from "../store/store";
 
 interface LoginFormData {
   email: string;
@@ -21,6 +24,7 @@ const Login = (): JSX.Element => {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   //一個接收 LoginFormData 作為參數的表單送出函式
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
@@ -37,8 +41,18 @@ const Login = (): JSX.Element => {
       const res = await adminApi.post("/admin/signin", loginData);
       const { token, expired } = res.data;
 
-      // 儲存 token 到 cookie，加上 path=/ 以確保全站可用
+      const user = { email: data.email };
+
+      // 儲存 token 到 localStorage 與 cookie，以支援目前邏輯和新狀態管理
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({ token, user, isAuthenticated: true }),
+      );
       document.cookie = `hexToken=${token}; expires=${new Date(expired)}; path=/;`;
+
+      // dispatch 到 Redux store，讓整個 app 知道誰登入了
+      dispatch(loginSuccess({ token, user }));
+
       // 登入成功後，右上角會彈出通知視窗
       Swal.fire({
         toast: true,

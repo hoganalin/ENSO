@@ -273,7 +273,7 @@
     .spec-item {
       display: flex;
       justify-content: space-between;
-      padding: 16px 0;
+      padding: 16px 0px;
       border-bottom: 1px solid #eee;
       font-size: 0.95rem;
 
@@ -284,6 +284,7 @@
       .spec-value {
         color: #333;
         font-weight: 500;
+        margin-left: 32px;
       }
     }
   }

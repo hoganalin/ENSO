@@ -3,6 +3,7 @@
 這是一個使用 React + Vite 建立的禪香/線香電商網站原型。
 
 ## 🚀 主要功能
+
 - **商品展示**: 分類顯示各式禪香與線香。
 - **購物車系統**: 使用 Redux Toolkit 管理購物車狀態。
 - **全站導覽**: 整合動態麵包屑 (Breadcrumb) 提升使用者體驗。
@@ -16,7 +17,7 @@
 ### 1. 專案技術棧 (Tech Stack)
 
 - **架構/打包工具**: React + Vite
-- **路由管理**: React Router (`src/router`)
+<!-- - **路由管理**: React Router (`src/router`) -->
 - **狀態管理**: Redux Toolkit (`src/store`, `src/slice`)
 - **API 請求**: Axios (`src/services` 集中管理)
 - **視覺動畫**: AOS (Animate On Scroll)
@@ -43,18 +44,23 @@ src/
 ### 3. 核心功能說明
 
 #### 3.1 頁面版型與全域動畫 (FrontendLayout)
+
 所有前端的基礎版型都在 `src/layout/FrontendLayout.jsx` 中設定。
+
 - **Header/Footer**: 由此佈局套用，所有子頁面 (`Outlet`) 都會自動帶入。
 - **全域麵包屑 (Breadcrumb)**: 同樣在佈局層級引入，根據當前路由自動生成導覽路徑。
 - **AOS 動畫全域監聽**: 在此處執行 `AOS.init()`。監聽 `location.pathname` 執行 `AOS.refresh()` ，確保換頁後動畫依然有效。
 
 #### 3.2 麵包屑導覽 (Breadcrumb)
+
 組件位於 `src/components/Breadcrumb.jsx`：
+
 - **動態路徑解析**: 使用 `useLocation` 拆解路徑。
 - **中文對應表**: 透過 `breadcrumbMap` 對象將英文路由轉化為中文名稱。
 - **特殊處理**: 針對 `product/:id` 動態路由會自動顯示為「產品詳情」。
 
 #### 3.3 狀態管理與 API 請求
+
 - **API 請求**: 封裝在 `src/services/` 底下（如 `getSingleProductApi`）。
 - **Redux 操作**: 購物車邏輯定義在 `slice/cartSlice.js`，將邏輯從 UI 元件中抽離。
 

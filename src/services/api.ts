@@ -16,17 +16,31 @@ export const adminApi = axios.create({
 // 1. 請求攔截器 (Request Interceptor)：自動注入 Token
 adminApi.interceptors.request.use(
   (config) => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("hexToken="))
-      ?.split("=")[1];
+    const authInfo = localStorage.getItem("auth");
+    let token: string | null = null;
+
+    if (authInfo) {
+      try {
+        token = JSON.parse(authInfo).token;
+      } catch {
+        token = null;
+      }
+    }
+
+    if (!token) {
+      token =
+        document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("hexToken="))
+          ?.split("=")[1] ?? null;
+    }
 
     if (token) {
       config.headers.Authorization = token;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // 2. 回應攔截器 (Response Interceptor)：處理驗證失敗與統一錯誤
@@ -51,5 +65,5 @@ adminApi.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );

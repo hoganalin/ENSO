@@ -9,13 +9,35 @@ import {
   createAsyncDeleteAllCart,
   createAsyncDeleteSingleCart,
   createAsyncUpdateCart,
+  createAsyncGetCart,
 } from "../slice/cartSlice";
+import { applyCouponApi } from "../services/coupon";
 
 function Cart(): JSX.Element {
   const carts = useSelector((state: RootState) => state.cart.carts);
   const dispatch = useDispatch<AppDispatch>();
   const { showSuccess, showError } = useMessage();
   const [loadingCartId, setLoadingCartId] = useState("");
+
+  const [couponCode, setCouponCode] = useState("");
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode) {
+      showError("請輸入優惠代碼");
+      return;
+    }
+    setIsApplyingCoupon(true);
+    try {
+      await applyCouponApi(couponCode);
+      showSuccess("優惠券套用成功");
+      dispatch(createAsyncGetCart()); // 重新刷購物車資訊取得折扣價格
+    } catch (error: any) {
+      showError(error.response?.data?.message || "優惠券套用失敗");
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+  };
 
   const handleDeleteSingleCart = async (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -187,7 +209,27 @@ function Cart(): JSX.Element {
               </div>
             </div>
           ))}
-
+          <div className="input-group my-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="有優惠碼嗎"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value)}
+            />
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={handleApplyCoupon}
+              disabled={isApplyingCoupon || !couponCode}
+            >
+              {isApplyingCoupon ? (
+                <i className="fas fa-spinner fa-spin"></i>
+              ) : (
+                "套用優惠券"
+              )}
+            </button>
+          </div>
           <div className="d-flex justify-content-between mt-4 border-top pt-4">
             <p className="mb-0 h4 fw-bold">總計</p>
             <p className="mb-0 h4 fw-bold text-gold">

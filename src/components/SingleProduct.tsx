@@ -158,6 +158,21 @@ function SingleProduct(): JSX.Element {
               <span className="spec-label">每盒數量</span>
               <span className="spec-value">20 支</span>
             </div>
+            <div className="spec-item">
+              <span className="spec-label">庫存數量</span>
+              <span
+                className="spec-value"
+                style={
+                  product.inventory == null
+                    ? { color: "#9e9e9e" }
+                    : product.inventory < 5
+                      ? { color: "#e53935" }
+                      : undefined
+                }
+              >
+                {product.inventory != null ? `${product.inventory} 盒` : "缺貨"}
+              </span>
+            </div>
           </div>
 
           {/* 數量選擇器 + 加入購物車 */}
