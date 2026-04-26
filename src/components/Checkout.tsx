@@ -149,278 +149,278 @@ function Checkout(): JSX.Element {
           </p>
         </div>
       )}
-    <div className="checkout-page py-12">
-      <div className="max-w-[1180px] mx-auto">
-        {/* ... (進度條保持不變) */}
-        {/* 結帳進度條 */}
-        <div className="checkout-progress mb-5">
-          <div className="step completed">
-            <span className="step-num">1</span>
-            <span className="step-text">確認購物車</span>
+      <div className="checkout-page py-12">
+        <div className="max-w-[1180px] mx-auto">
+          {/* ... (進度條保持不變) */}
+          {/* 結帳進度條 */}
+          <div className="checkout-progress mb-12 pb-4">
+            <div className="step completed">
+              <span className="step-num">1</span>
+              <span className="step-text">確認購物車</span>
+            </div>
+            <div className="step-line active"></div>
+            <div className="step active">
+              <span className="step-num">2</span>
+              <span className="step-text">填寫資料</span>
+            </div>
+            <div className="step-line"></div>
+            <div className="step">
+              <span className="step-num">3</span>
+              <span className="step-text">完成訂購</span>
+            </div>
           </div>
-          <div className="step-line active"></div>
-          <div className="step active">
-            <span className="step-num">2</span>
-            <span className="step-text">填寫資料</span>
-          </div>
-          <div className="step-line"></div>
-          <div className="step">
-            <span className="step-num">3</span>
-            <span className="step-text">完成訂購</span>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* 左側：客戶資訊表單 */}
-          <div className="lg:col-span-7">
-            <div className="checkout-form-container">
-              <h3 className="section-title mb-4">收件人資訊</h3>
-              <form onSubmit={handleSubmit(onFormSubmit)}>
-                <div className="mb-4">
-                  <label
-                    htmlFor="email"
-                    className="block text-gray-500 text-sm font-bold mb-2"
-                  >
-                    電子郵件
-                  </label>
-                  <input
-                    type="email"
-                    className="enso-input"
-                    id="email"
-                    {...register("email", {
-                      required: "請輸入 Email",
-                      pattern: {
-                        value: /^\S+@\S+$/i,
-                        message: "Email 格式不正確",
-                      },
-                    })}
-                    placeholder="example@gmail.com"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.email.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            {/* 左側：客戶資訊表單 */}
+            <div className="lg:col-span-7">
+              <div className="checkout-form-container">
+                <h3 className="section-title mb-4">收件人資訊</h3>
+                <form onSubmit={handleSubmit(onFormSubmit)}>
                   <div className="mb-4">
                     <label
-                      htmlFor="name"
+                      htmlFor="email"
                       className="block text-gray-500 text-sm font-bold mb-2"
                     >
-                      收件人姓名
+                      電子郵件
+                    </label>
+                    <input
+                      type="email"
+                      className="enso-input"
+                      id="email"
+                      {...register("email", {
+                        required: "請輸入 Email",
+                        pattern: {
+                          value: /^\S+@\S+$/i,
+                          message: "Email 格式不正確",
+                        },
+                      })}
+                      placeholder="example@gmail.com"
+                    />
+                    {errors.email && (
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="mb-4">
+                      <label
+                        htmlFor="name"
+                        className="block text-gray-500 text-sm font-bold mb-2"
+                      >
+                        收件人姓名
+                      </label>
+                      <input
+                        type="text"
+                        className="enso-input"
+                        id="name"
+                        {...register("name", {
+                          required: "請輸入收件人姓名",
+                        })}
+                      />
+                      {errors.name && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.name.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mb-4">
+                      <label
+                        htmlFor="tel"
+                        className="block text-gray-500 text-sm font-bold mb-2"
+                      >
+                        電話
+                      </label>
+                      <input
+                        type="tel"
+                        className="enso-input"
+                        id="tel"
+                        {...register("tel", {
+                          required: "請輸入收件人電話",
+                          minLength: { value: 8, message: "電話至少 8 碼" },
+                          maxLength: { value: 10, message: "電話最多 10 碼" },
+                          pattern: {
+                            value: /^\d+$/,
+                            message: "電話僅能輸入數字",
+                          },
+                        })}
+                      />
+                      {errors.tel && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.tel.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <label
+                      htmlFor="address"
+                      className="block text-gray-500 text-sm font-bold mb-2"
+                    >
+                      收件地址
                     </label>
                     <input
                       type="text"
                       className="enso-input"
-                      id="name"
-                      {...register("name", {
-                        required: "請輸入收件人姓名",
+                      id="address"
+                      {...register("address", {
+                        required: "請輸入收件地址",
                       })}
+                      placeholder="請輸入詳細地址"
                     />
-                    {errors.name && (
+                    {errors.address && (
                       <p className="text-red-500 text-sm mt-1">
-                        {errors.name.message}
+                        {errors.address.message}
                       </p>
                     )}
                   </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor="tel"
-                      className="block text-gray-500 text-sm font-bold mb-2"
-                    >
-                      電話
+
+                  <div className="mb-5">
+                    <label className="block text-gray-500 text-sm font-bold mb-2">
+                      付款方式
                     </label>
-                    <input
-                      type="tel"
-                      className="enso-input"
-                      id="tel"
-                      {...register("tel", {
-                        required: "請輸入收件人電話",
-                        minLength: { value: 8, message: "電話至少 8 碼" },
-                        maxLength: { value: 10, message: "電話最多 10 碼" },
-                        pattern: {
-                          value: /^\d+$/,
-                          message: "電話僅能輸入數字",
-                        },
+                    <div className="payment-methods space-y-4">
+                      {CATEGORY_ORDER.map((category) => {
+                        const methods = METHODS_BY_CATEGORY[category];
+                        if (!methods || methods.length === 0) return null;
+                        const cat = PAYMENT_CATEGORIES[category];
+                        return (
+                          <div key={category}>
+                            <div
+                              className={`inline-block px-2 py-0.5 rounded text-xs font-bold mb-2 ${cat.colorClass}`}
+                            >
+                              {cat.label}
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              {methods.map((m) => (
+                                <label
+                                  key={m.id}
+                                  className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-enso-primary hover:bg-emerald-50/30 transition [&:has(input:checked)]:border-enso-primary [&:has(input:checked)]:bg-emerald-50/50 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-enso-primary/40"
+                                >
+                                  <input
+                                    type="radio"
+                                    value={m.id}
+                                    className="mt-1 accent-emerald-600"
+                                    {...register("payment", {
+                                      required: "請選擇付款方式",
+                                    })}
+                                  />
+                                  <span className="flex-1">
+                                    <span className="flex items-center gap-2 font-medium">
+                                      <i className={`bi ${m.icon}`}></i>
+                                      {m.label}
+                                    </span>
+                                    <span className="block text-xs text-gray-500 mt-0.5">
+                                      {m.description}
+                                    </span>
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        );
                       })}
-                    />
-                    {errors.tel && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors.tel.message}
+                    </div>
+                    {errors.payment && (
+                      <p className="text-red-500 text-sm mt-2">
+                        {errors.payment.message}
                       </p>
                     )}
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label
-                    htmlFor="address"
-                    className="block text-gray-500 text-sm font-bold mb-2"
-                  >
-                    收件地址
-                  </label>
-                  <input
-                    type="text"
-                    className="enso-input"
-                    id="address"
-                    {...register("address", {
-                      required: "請輸入收件地址",
-                    })}
-                    placeholder="請輸入詳細地址"
-                  />
-                  {errors.address && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.address.message}
+                    <p className="text-[11px] text-gray-400 mt-3 leading-5">
+                      ⓘ 本站為 portfolio demo，已串接綠界 ECPay
+                      模擬器，不會實際扣款，僅示範完整 UI / 資料流 / 後台對帳。
                     </p>
-                  )}
-                </div>
-
-                <div className="mb-5">
-                  <label className="block text-gray-500 text-sm font-bold mb-2">
-                    付款方式
-                  </label>
-                  <div className="payment-methods space-y-4">
-                    {CATEGORY_ORDER.map((category) => {
-                      const methods = METHODS_BY_CATEGORY[category];
-                      if (!methods || methods.length === 0) return null;
-                      const cat = PAYMENT_CATEGORIES[category];
-                      return (
-                        <div key={category}>
-                          <div
-                            className={`inline-block px-2 py-0.5 rounded text-xs font-bold mb-2 ${cat.colorClass}`}
-                          >
-                            {cat.label}
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {methods.map((m) => (
-                              <label
-                                key={m.id}
-                                className="flex items-start gap-3 p-3 border border-gray-200 rounded-lg cursor-pointer hover:border-enso-primary hover:bg-emerald-50/30 transition [&:has(input:checked)]:border-enso-primary [&:has(input:checked)]:bg-emerald-50/50 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-enso-primary/40"
-                              >
-                                <input
-                                  type="radio"
-                                  value={m.id}
-                                  className="mt-1 accent-emerald-600"
-                                  {...register("payment", {
-                                    required: "請選擇付款方式",
-                                  })}
-                                />
-                                <span className="flex-1">
-                                  <span className="flex items-center gap-2 font-medium">
-                                    <i className={`bi ${m.icon}`}></i>
-                                    {m.label}
-                                  </span>
-                                  <span className="block text-xs text-gray-500 mt-0.5">
-                                    {m.description}
-                                  </span>
-                                </span>
-                              </label>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
                   </div>
-                  {errors.payment && (
-                    <p className="text-red-500 text-sm mt-2">
-                      {errors.payment.message}
-                    </p>
-                  )}
-                  <p className="text-[11px] text-gray-400 mt-3 leading-5">
-                    ⓘ 本站為 portfolio demo，已串接綠界 ECPay
-                    模擬器，不會實際扣款，僅示範完整 UI / 資料流 / 後台對帳。
-                  </p>
-                </div>
 
-                <h3 className="section-title mb-4">訂單備註</h3>
-                <div className="mb-5">
-                  <textarea
-                    className="form-control enso-input"
-                    rows={3}
-                    placeholder="有什麼想告訴我們的嗎？"
-                    {...register("message")}
-                  ></textarea>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <Link
-                    href="/cart"
-                    className="text-gray-500 no-underline hover:text-enso-primary transition"
-                  >
-                    <i className="bi bi-arrow-left mr-2"></i>回購物車
-                  </Link>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="py-3 px-8 bg-enso-primary text-white rounded-full font-bold hover:bg-enso-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2"
-                  >
-                    {isSubmitting && (
-                      <RotatingLines
-                        strokeColor="white"
-                        strokeWidth="5"
-                        animationDuration="0.75"
-                        width="18"
-                        visible={true}
-                      />
-                    )}
-                    {isSubmitting ? "處理中…" : "提交訂單"}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          {/* 右側：訂單摘要 */}
-          <div className="lg:col-span-5">
-            <div className="order-summary-card">
-              <h3 className="summary-title mb-4">訂單摘要</h3>
-              <div className="item-list mb-4">
-                {carts?.map((item) => (
-                  <div
-                    className="summary-item flex items-center mb-3"
-                    key={item.id}
-                  >
-                    <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 mr-3">
-                      <img
-                        src={item.product?.imageUrl}
-                        alt={item.product?.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="item-info grow">
-                      <p className="item-name m-0">{item.product?.title}</p>
-                      <p className="item-qty  text-gray-500">x {item.qty}</p>
-                    </div>
-                    <div className="item-price">NT${item.total}</div>
+                  <h3 className="section-title mb-4">訂單備註</h3>
+                  <div className="mb-5">
+                    <textarea
+                      className="form-control enso-input"
+                      rows={3}
+                      placeholder="有什麼想告訴我們的嗎？"
+                      {...register("message")}
+                    ></textarea>
                   </div>
-                ))}
+
+                  <div className="flex justify-between items-center">
+                    <Link
+                      href="/cart"
+                      className="text-gray-500 no-underline hover:text-enso-primary transition"
+                    >
+                      <i className="bi bi-arrow-left mr-2"></i>回購物車
+                    </Link>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="py-3 px-8 bg-enso-primary text-white rounded-full font-bold hover:bg-enso-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                    >
+                      {isSubmitting && (
+                        <RotatingLines
+                          strokeColor="white"
+                          strokeWidth="5"
+                          animationDuration="0.75"
+                          width="18"
+                          visible={true}
+                        />
+                      )}
+                      {isSubmitting ? "處理中…" : "提交訂單"}
+                    </button>
+                  </div>
+                </form>
               </div>
+            </div>
 
-              <div className="price-details pt-4 border-t border-gray-200">
-                <div className="flex justify-between mb-3">
-                  <span>小計</span>
-                  <span>NT${totalPrice}</span>
+            {/* 右側：訂單摘要 */}
+            <div className="lg:col-span-5">
+              <div className="order-summary-card">
+                <h3 className="summary-title mb-4">訂單摘要</h3>
+                <div className="item-list mb-4">
+                  {carts?.map((item) => (
+                    <div
+                      className="summary-item flex items-center mb-3"
+                      key={item.id}
+                    >
+                      <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 mr-3">
+                        <img
+                          src={item.product?.imageUrl}
+                          alt={item.product?.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="item-info grow">
+                        <p className="item-name m-0">{item.product?.title}</p>
+                        <p className="item-qty  text-gray-500">x {item.qty}</p>
+                      </div>
+                      <div className="item-price">NT${item.total}</div>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex justify-between mb-3">
-                  <span>運費</span>
-                  <span className="text-green-600">
-                    {totalPrice >= 800 ? "免運" : "NT$50"}
-                  </span>
-                </div>
-                <div className="flex justify-between total-price pt-3 border-t border-gray-200 mt-3">
-                  <strong>總計</strong>
-                  <strong className="text-enso-gold  text-xl">
-                    NT {totalPrice >= 800 ? totalPrice : totalPrice + 50}
-                  </strong>
+
+                <div className="price-details pt-4 border-t border-gray-200">
+                  <div className="flex justify-between mb-3">
+                    <span>小計</span>
+                    <span>NT${totalPrice}</span>
+                  </div>
+                  <div className="flex justify-between mb-3">
+                    <span>運費</span>
+                    <span className="text-green-600">
+                      {totalPrice >= 800 ? "免運" : "NT$50"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between total-price pt-3 border-t border-gray-200 mt-3">
+                    <strong>總計</strong>
+                    <strong className="text-enso-gold  text-xl">
+                      NT {totalPrice >= 800 ? totalPrice : totalPrice + 50}
+                    </strong>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
