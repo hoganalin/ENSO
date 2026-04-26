@@ -1,0 +1,426 @@
+/* Collection Section */
+
+.collection-title-sub {
+  color: $enso-brand-gold;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+}
+
+.collection-title {
+  font-family: $headings-font-family;
+  font-weight: 700;
+  color: $enso-text-primary;
+  letter-spacing: 0.05em;
+}
+
+.collection-card {
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  background-color: transparent;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba($black, 0.08);
+
+    .collection-card-bg {
+      opacity: 0.25;
+    }
+  }
+}
+
+.collection-card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.15;
+  transition: opacity 0.3s ease;
+  z-index: 0;
+}
+
+.collection-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 4px 12px rgba($black, 0.1);
+}
+
+/* Brand Story Section */
+
+.story-title {
+  font-family: $headings-font-family;
+  font-weight: 700;
+  color: $enso-text-primary;
+  letter-spacing: 0.05em;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.75rem;
+
+  // 這裡定義了首頁標題下方的「金色底線」
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: $enso-brand-gold;
+  }
+}
+
+.story-text-content {
+  color: $gray-800;
+  font-size: 14px;
+  line-height: 2;
+  letter-spacing: 0.03em;
+  margin-top: 1.5rem;
+  margin-bottom: 2.5rem;
+
+  p {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.story-feature-card {
+  border-radius: 16px;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  height: 100%;
+  padding: 1.75rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  background-size: cover;
+  background-position: center;
+
+  // 遮罩層，確保文字可讀
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    transition: background 0.3s ease;
+  }
+
+  &.bg-primary {
+    background-color: $enso-brand-primary;
+    color: $white;
+    &::before {
+      background: rgba($enso-brand-primary, 0.85);
+    }
+  }
+
+  &.bg-light-beige {
+    background-color: #f1efe9;
+    color: $enso-text-primary;
+    &::before {
+      background: rgba(#f1efe9, 0.9);
+    }
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba($black, 0.15);
+    &::before {
+      background: rgba($black, 0.4);
+    }
+    color: $white !important;
+    .emoji-icon i,
+    h6,
+    p {
+      color: $white !important;
+    }
+  }
+
+  // 各別背景設定
+  &.--natural {
+    background-image: url("https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop");
+  }
+
+  &.--handmade {
+    background-image: url("https://images.unsplash.com/photo-1459156212016-c812468e2115?w=600&auto=format&fit=crop");
+  }
+
+  &.--sustainability {
+    background-image: url("https://tse3.mm.bing.net/th/id/OIP.3AGvpFYiZvjMSrqyFA2KHwHaE8?rs=1&pid=ImgDetMain&o=7&rm=3");
+  }
+
+  &.--delivery {
+    background-image: url("https://images.unsplash.com/photo-1549194388-f61be84a6e9e?q=80&w=600");
+  }
+
+  .emoji-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  h6 {
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+  }
+
+  p {
+    position: relative;
+    z-index: 2;
+    transition: color 0.3s ease;
+  }
+}
+
+/* Review Card */
+.review-card {
+  background-color: $white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba($black, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba($black, 0.1);
+  }
+}
+
+.review-stars {
+  span {
+    color: $enso-brand-gold;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+}
+
+.review-quote {
+  font-size: 14px;
+  line-height: 1.8;
+  color: $gray-700;
+  margin-bottom: 0;
+}
+
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid $gray-200;
+}
+
+.review-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: $gray-200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: $gray-500;
+  font-size: 1.3rem;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.review-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: $enso-text-primary;
+}
+
+.review-role {
+  font-size: 12px;
+  color: $gray-500;
+  letter-spacing: 0.03em;
+}
+
+/* ===== Section Background Effects ===== */
+
+/* 探索香氣 — 中央光暈擴散 */
+.section-explore {
+  position: relative;
+  overflow: hidden;
+
+  // 使用偽元素建立「香氣擴散」的圓形光暈裝飾
+  &::before {
+    content: ""; // 必須設定 content 才能顯示偽元素
+    position: absolute; // 脫離文檔流，相對於父層定位
+    top: 50%; // 垂直置中
+    left: 50%; // 水平置中
+    transform: translate(-50%, -50%); // 偏移自身寬高的 50%，達到真正置中
+    width: 600px; // 光暈寬度
+    height: 600px; // 光暈高度
+    background: radial-gradient(
+      // 從中心向外的放射狀漸層
+      circle,
+      // 圓形擴散
+      rgba($enso-brand-gold, 0.1) 0%,
+      // 中心：極淡的品牌金色（10% 透明度）
+      transparent 70% // 邊緣：完全透明，自然消散
+    );
+    pointer-events: none; // 不影響使用者的點擊與互動
+    z-index: 0; // 確保在內容層的下方
+  }
+
+  > .container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* 精選線香 — 底部金色裝飾線 + 微妙漸層 */
+.section-featured {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, $white 0%, rgba(#f8f6f1, 1) 100%);
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($enso-brand-gold, 0.4),
+      transparent
+    );
+  }
+}
+
+/* 品牌故事 — 水墨暈染 + 禪圓裝飾 */
+.section-story {
+  position: relative;
+  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),
+    url("https://images.unsplash.com/photo-1551690935-a9e6f0a7e788?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+  /* 右下角淡金色暈染 */
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: -80px;
+    right: -80px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(
+      circle,
+      rgba($enso-brand-gold, 0.06) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+
+  /* 左上角禪圓（ENSO）裝飾 */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 40px;
+    left: -60px;
+    width: 180px;
+    height: 180px;
+    border: 2px solid rgba($enso-brand-gold, 0.08);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  > .container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* 顧客心聲 — 暖米色漸層 */
+.section-reviews {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    170deg,
+    $white 0%,
+    rgba(#faf8f4, 1) 40%,
+    rgba(#f5f0e8, 1) 100%
+  );
+
+  /* 頂部柔和金線裝飾 */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 2px;
+    // 線性漸層
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba($enso-brand-gold, 0.35),
+      transparent
+    );
+  }
+}
+
+/* 精選線香輪播 */
+.featured-carousel {
+  position: relative;
+
+  .featured-swiper {
+    padding-bottom: 60px;
+    overflow: hidden;
+  }
+
+  .swiper-pagination {
+    bottom: 0px;
+
+    .swiper-pagination-bullet {
+      background: #d1cfc7;
+      opacity: 0.6;
+      width: 10px;
+      height: 10px;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+
+      &-active {
+        background: $enso-brand-gold;
+        opacity: 1;
+        transform: scale(1.2);
+      }
+    }
+  }
+
+  .collection-card {
+    height: 100%;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
