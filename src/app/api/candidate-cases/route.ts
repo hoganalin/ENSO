@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
+import { Redis } from "@upstash/redis";
 
 import type { CandidateCase } from "../../../types/candidate-case";
 
@@ -9,15 +10,22 @@ import type { CandidateCase } from "../../../types/candidate-case";
 // GET     — 列出所有提案（可 filter by status / agentId）
 // POST    — 新增一筆提案（從後台 Live Trace「加進 regression」按鈕）
 // PATCH   — 更新狀態（approve / archive / mark exported）
-// OPTIONS — CORS preflight，允許 ENSO-BackEnd（:5173）跨 origin 呼叫
+// OPTIONS — CORS preflight，允許 ENSO-BackEnd 跨 origin 呼叫
 //
-// 儲存：data/candidate-cases.json（append-only JSON array）
-// 並行安全：demo scale，同時寫入機率低；上線要換 DB
+// 儲存策略（跟 /api/events 同一套 pattern）：
+// - Production / 有 Redis env：Upstash Redis LIST（RPUSH append、LRANGE 讀、LSET 改）
+//   Vercel serverless filesystem 是 read-only，fs.writeFile 會 EROFS。
+// - Dev 沒設 Redis env：fallback 到 data/candidate-cases.json。
+//
+// PATCH 並行性：LRANGE→findIndex→LSET 不是原子操作。demo 規模單一運營審核，
+// 並發機率低；上線要換 Lua script 或改 HASH 結構。
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const DATA_FILE = path.join(process.cwd(), "data", "candidate-cases.json");
+const REDIS_KEY = "enso:candidate_cases";
+const LIST_MAX = 1000; // candidate cases 不會像 events 那麼多
 
 const ALLOWED_ORIGINS = new Set([
   "http://localhost:5173",
@@ -34,24 +42,93 @@ function corsHeaders(origin: string | null): Record<string, string> {
   };
 }
 
-async function readCases(): Promise<CandidateCase[]> {
-  try {
-    const raw = await fs.readFile(DATA_FILE, "utf-8");
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as CandidateCase[]) : [];
-  } catch (err) {
-    if ((err as NodeJS.ErrnoException).code === "ENOENT") return [];
-    throw err;
+// ============== Storage abstraction ==============
+
+type Storage = {
+  list(): Promise<CandidateCase[]>;
+  append(c: CandidateCase): Promise<void>;
+  /** 用 id 找 + 部份 patch 後寫回；找不到回 null */
+  patch(id: string, partial: Partial<CandidateCase>): Promise<CandidateCase | null>;
+};
+
+let cachedRedis: Redis | null | undefined;
+function getRedis(): Redis | null {
+  if (cachedRedis !== undefined) return cachedRedis;
+  const url =
+    process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+  if (!url || !token) {
+    cachedRedis = null;
+    return null;
   }
+  cachedRedis = new Redis({ url, token });
+  return cachedRedis;
 }
 
-async function writeCases(cases: CandidateCase[]): Promise<void> {
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
-  await fs.writeFile(DATA_FILE, JSON.stringify(cases, null, 2), "utf-8");
+const redisStorage: Storage = {
+  async list() {
+    const redis = getRedis();
+    if (!redis) return [];
+    const items = await redis.lrange<CandidateCase>(REDIS_KEY, 0, -1);
+    return items.filter(
+      (c): c is CandidateCase => !!c && typeof c === "object",
+    );
+  },
+  async append(c) {
+    const redis = getRedis();
+    if (!redis) return;
+    await redis.rpush(REDIS_KEY, c);
+    await redis.ltrim(REDIS_KEY, -LIST_MAX, -1);
+  },
+  async patch(id, partial) {
+    const redis = getRedis();
+    if (!redis) return null;
+    // 注意：非原子。demo scale OK；上線換 Lua script 包成原子。
+    const all = await redis.lrange<CandidateCase>(REDIS_KEY, 0, -1);
+    const idx = all.findIndex((c) => c?.id === id);
+    if (idx === -1) return null;
+    const updated: CandidateCase = { ...all[idx], ...partial };
+    await redis.lset(REDIS_KEY, idx, updated);
+    return updated;
+  },
+};
+
+const fsStorage: Storage = {
+  async list() {
+    try {
+      const raw = await fs.readFile(DATA_FILE, "utf-8");
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? (parsed as CandidateCase[]) : [];
+    } catch (err) {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") return [];
+      throw err;
+    }
+  },
+  async append(c) {
+    const cases = await fsStorage.list();
+    cases.push(c);
+    await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
+    await fs.writeFile(DATA_FILE, JSON.stringify(cases, null, 2), "utf-8");
+  },
+  async patch(id, partial) {
+    const cases = await fsStorage.list();
+    const idx = cases.findIndex((c) => c.id === id);
+    if (idx === -1) return null;
+    cases[idx] = { ...cases[idx], ...partial };
+    await fs.mkdir(path.dirname(DATA_FILE), { recursive: true });
+    await fs.writeFile(DATA_FILE, JSON.stringify(cases, null, 2), "utf-8");
+    return cases[idx];
+  },
+};
+
+function getStorage(): Storage {
+  return getRedis() ? redisStorage : fsStorage;
 }
 
-// 最低限度的 POST 驗證：只擋 obvious 髒資料；
-// status 在 POST 固定設成 'proposed'，所以 caller 不需要帶
+// ============== Validation ==============
+
+// POST 的 body 不該帶 id / createdAt / status（這三欄由 server 補）
 function isValidCreatePayload(
   raw: unknown,
 ): raw is Omit<CandidateCase, "id" | "createdAt" | "status"> {
@@ -77,6 +154,8 @@ function genId(): string {
   return `cand_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
+// ============== Handlers ==============
+
 export async function OPTIONS(req: Request) {
   return new NextResponse(null, {
     status: 204,
@@ -87,15 +166,14 @@ export async function OPTIONS(req: Request) {
 export async function GET(req: Request) {
   const origin = req.headers.get("origin");
   const url = new URL(req.url);
-  const status = url.searchParams.get("status"); // 可選
+  const status = url.searchParams.get("status");
   const agentId = url.searchParams.get("agentId");
 
   try {
-    let cases = await readCases();
+    let cases = await getStorage().list();
     if (status) cases = cases.filter((c) => c.status === status);
     if (agentId) cases = cases.filter((c) => c.agentId === agentId);
 
-    // 最新在前
     const sorted = [...cases].sort(
       (a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt),
     );
@@ -145,11 +223,9 @@ export async function POST(req: Request) {
   };
 
   try {
-    const cases = await readCases();
-    cases.push(candidate);
-    await writeCases(cases);
+    await getStorage().append(candidate);
     return NextResponse.json(
-      { ok: true, case: candidate, total: cases.length },
+      { ok: true, case: candidate },
       { status: 201, headers: corsHeaders(origin) },
     );
   } catch (err) {
@@ -163,8 +239,7 @@ export async function POST(req: Request) {
 }
 
 // PATCH /api/candidate-cases  body: { id, status }
-// 允許後台審核時改 status（approve/archive/exported）。
-// 其他欄位維持不可改，因為他們是 regression 的 ground truth。
+// 只允許改 status；其他欄位是 regression 的 ground truth，禁止後改。
 export async function PATCH(req: Request) {
   const origin = req.headers.get("origin");
 
@@ -198,21 +273,17 @@ export async function PATCH(req: Request) {
   }
 
   try {
-    const cases = await readCases();
-    const idx = cases.findIndex((c) => c.id === id);
-    if (idx === -1) {
+    const updated = await getStorage().patch(id, {
+      status: nextStatus as CandidateCase["status"],
+    });
+    if (!updated) {
       return NextResponse.json(
         { error: `Case not found: ${id}` },
         { status: 404, headers: corsHeaders(origin) },
       );
     }
-    cases[idx] = {
-      ...cases[idx],
-      status: nextStatus as CandidateCase["status"],
-    };
-    await writeCases(cases);
     return NextResponse.json(
-      { ok: true, case: cases[idx] },
+      { ok: true, case: updated },
       { headers: corsHeaders(origin) },
     );
   } catch (err) {
