@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { usePathname } from "next/navigation";
 
 import AOS from "aos";
@@ -13,7 +13,7 @@ import MessageToast from "../../components/MessageToast";
 import ChatWidget from "../../components/ShoppingAgent/ChatWidget";
 
 import { restoreAuth } from "../../slice/authSlice";
-import type { AppDispatch } from "../../store/store";
+import type { AppDispatch, RootState } from "../../store/store";
 
 export default function FrontendShell({
   children,
@@ -22,6 +22,7 @@ export default function FrontendShell({
 }): JSX.Element {
   const pathname = usePathname();
   const dispatch = useDispatch<AppDispatch>();
+  const theme = useSelector((state: RootState) => state.theme);
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true });
@@ -43,6 +44,18 @@ export default function FrontendShell({
     AOS.refresh();
   }, [pathname]);
 
+  // Sync theme state to <html> data-attributes so the token system can react.
+  useEffect(() => {
+    const html = document.documentElement;
+    html.dataset.direction = theme.direction;
+    html.dataset.accent = theme.accent;
+    if (theme.noPaper) html.setAttribute("data-no-paper", "");
+    else html.removeAttribute("data-no-paper");
+    if (theme.noSmoke) html.setAttribute("data-no-smoke", "");
+    else html.removeAttribute("data-no-smoke");
+    html.style.setProperty("--brush-intensity", String(theme.brushIntensity));
+  }, [theme.direction, theme.accent, theme.noPaper, theme.noSmoke, theme.brushIntensity]);
+
   return (
     <>
       <MessageToast />
@@ -54,4 +67,3 @@ export default function FrontendShell({
     </>
   );
 }
-

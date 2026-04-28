@@ -4,6 +4,7 @@ import cartReducer from "../slice/cartSlice";
 import messageReducer from "../slice/messageSlice";
 import authReducer from "../slice/authSlice";
 import agentReducer from "../slice/agentSlice";
+import themeReducer from "../slice/themeSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     message: messageReducer,
     auth: authReducer,
     agent: agentReducer,
+    theme: themeReducer,
   },
 });
 

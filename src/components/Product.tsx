@@ -14,25 +14,34 @@ import { currency } from "../assets/utils/filter";
 
 import type { AppDispatch } from "../store/store";
 import type { Product } from "../types/product";
-//分頁的型別
-interface Pagination {
+
+interface PaginationData {
   total_pages: number;
   current_page: number;
   has_next: boolean;
   has_pre: boolean;
 }
+
+const FALLBACK_KANJI = ["香", "月", "霧", "禅", "静", "夜", "炎", "風"];
+
 const Products = (): JSX.Element => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [currentCategory, setCurrentCategory] = useState("all");
+  const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc">("default");
   const [loadingCartId, setLoadingCartId] = useState<string | null>(null);
-  const [loadingProductId, setLoadingProductId] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [pagination, setPagination] = useState<PaginationData | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { showSuccess, showError } = useMessage();
   const searchParams = useSearchParams();
-  const searchTerm = searchParams.get("search") || ""; //看網址裡面有沒有一個叫做 search 的標籤，如果有，把它後面的內容抓給我。
+  const searchTerm = searchParams.get("search") || "";
+  const urlCategory = searchParams.get("category");
+
+  useEffect(() => {
+    if (urlCategory) setCurrentCategory(urlCategory);
+  }, [urlCategory]);
 
   const handleAddCart = async (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -49,21 +58,6 @@ const Products = (): JSX.Element => {
       showError(typeof error === "string" ? error : "加入購物車失敗");
     } finally {
       setLoadingCartId(null);
-    }
-  };
-
-  const handleViewDetail = async (
-    e: React.MouseEvent<HTMLButtonElement>,
-    productId: string,
-  ) => {
-    e.preventDefault();
-    setLoadingProductId(productId);
-    try {
-      router.push(`/product/${productId}`);
-    } catch (error: unknown) {
-      console.error("導航出錯：", error);
-    } finally {
-      setLoadingProductId(null);
     }
   };
 
@@ -108,180 +102,175 @@ const Products = (): JSX.Element => {
     getProducts(1, currentCategory);
   }, [currentCategory, getProducts]);
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase()), //用來檢查字串裡面有沒有包含某個字段
-  );
+  const filteredProducts = products
+    .filter(
+      (product) =>
+        product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+    .sort((a, b) => {
+      if (sortBy === "price-asc") return a.price - b.price;
+      if (sortBy === "price-desc") return b.price - a.price;
+      return 0;
+    });
 
   return (
-    <>
-      <div className="hidden md:block">
-        <nav className="flex justify-center">
-          <div className="flex overflow-auto gap-3 py-5">
-            {categories.map((category) => (
-              <button
-                key={category}
-                className={` whitespace-nowrap  px-6 py-2 rounded-full text-sm font-medium border transition-all duration-300 ${
-                  currentCategory === category
-                    ? "bg-enso-primary text-white border-enso-primary"
-                    : "bg-white text-enso-primary border-gray-300 hover:border-enso-gold hover:text-enso-gold hover:bg-enso-gold/5"
-                }`}
-                aria-label={`Filter by category: ${category}`}
-                onClick={() => setCurrentCategory(category)}
-              >
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </button>
-            ))}
-          </div>
-        </nav>
-      </div>
-      <div className="block md:hidden my-4 px-3">
-        <select
-          className="block w-full px-4 py-2 rounded-full border border-gray-300 focus:ring-2 focus:ring-enso-primary bg-white"
-          value={currentCategory}
-          aria-label="Filter by category"
-          onChange={(e) => setCurrentCategory(e.target.value)}
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className="max-w-[1180px] mx-auto px-4 mt-3 md:mt-8">
-        {searchTerm && (
-          <div className="flex items-center mb-4">
-            <h5 className="m-0">
-              搜尋「<span className="text-enso-primary">{searchTerm}</span>
-              」的結果：
-            </h5>
-            <button
-              className="ml-3 text-sm rounded-full px-4 py-1 border border-gray-300 focus:ring-2 focus:ring-enso-primary bg-white hover:bg-gray-100 transition "
-              onClick={() => router.push("/product")}
-              aria-label="Clear current search"
-            >
-              清除搜尋
-            </button>
-          </div>
-        )}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredProducts.length > 0 ? (
-            filteredProducts.map((product, index) => (
-              <div
-                key={product.id}
-                data-aos="fade-up"
-                data-aos-delay={(index % 4) * 100}
-              >
-                <div
-                  className="group bg-white rounded-xl overflow-hidden flex flex-col h-full
-                transition-all duration-400 ease-out
-                hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]"
-                >
-                  {/* 圖片容器：relative 維持正方形 */}
-                  <div className="relative w-full aspect-square overflow-hidden bg-[#f8f6f1]">
-                    {/* 圖片：填滿容器，hover 時放大 */}
-                    <img
-                      src={product.imageUrl}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                      alt={product.title}
-                    />
-                    {/* Overlay：hover 時顯示 */}
-                    <div className="absolute inset-0 flex items-center justify-center gap-3 bg-enso-primary/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button
-                        className="bg-white rounded-full px-4 py-2 shadow-sm hover:bg-gray-100 transition"
-                        onClick={(e) => handleViewDetail(e, product.id)}
-                        disabled={loadingProductId === product.id}
-                        aria-label={`View details for ${product.title}`}
-                      >
-                        {loadingProductId === product.id ? (
-                          <RotatingLines
-                            strokeColor="grey"
-                            strokeWidth="5"
-                            animationDuration="0.75"
-                            width="16"
-                          />
-                        ) : (
-                          "查看詳情"
-                        )}
-                      </button>
-                    </div>
-                    {/* Badge：左上角 */}
-                    <div className="absolute top-3 left-3 z-10 bg-enso-gold text-white text-[11px] font-semibold uppercase tracking-wider px-3 py-1 rounded">
-                      精選
-                    </div>
-                  </div>
-                  <div className="p-4 flex flex-col flex-1">
-                    <div className="text-[11px] text-enso-gold uppercase tracking-widest font-bold mb-2">
-                      {product.category}
-                    </div>
-                    <h4 className="text-[1.15rem] font-semibold mb-2 text-enso-primary leading-snug">
-                      {/* leading-snug 控制行高，讓文字更緊密 */}
-                      <button
-                        className="text-inherit hover:!text-enso-gold transition-colors no-underline text-left w-full"
-                        // text-inherit 繼承父層的顏色
+    <div className="enso-product-page">
+      <header className="enso-product-page__hero">
+        <div className="t-eyebrow">Collection</div>
+        <h1 className="enso-product-page__title">
+          香の<span className="accent">商い</span>
+        </h1>
+        <p className="enso-product-page__sub">
+          四相之香——放鬆・冥想・淨化・復甦。每一支線香，都是一次回歸自我的邀請。
+        </p>
+      </header>
 
-                        onClick={(e) => handleViewDetail(e, product.id)}
-                      >
-                        {product.title}
-                      </button>
-                    </h4>
-                    <p className="text-sm text-enso-text-secondary mb-5 line-clamp-2">
-                      {product.description}
-                    </p>
-                    {/* line-clamp-2: Tailwind 內建的截斷兩行（等同 SCSS 裡的 -webkit-line-clamp） */}
-                    <div className="mt-auto flex justify-between items-center">
-                      {/* flex使區塊內部的價格和按鈕水平排列 */}
-                      <span className="font-semibold text-enso-primary text-[1.1rem]">
-                        NT$ {currency(product.price)}
-                      </span>
-                      <button
-                        className="w-10 h-10 rounded-full border border-enso-primary text-enso-primary flex items-center justify-center hover:bg-enso-primary hover:text-white transition-colors disabled:opacity-50"
-                        // disabled:opacity-50 = 當按鈕是 disabled 狀態時，透明度變成 50%。
-                        title="加入購物車"
-                        onClick={(e) => handleAddCart(e, product.id)}
-                        disabled={loadingCartId === product.id}
-                      >
-                        {loadingCartId === product.id ? (
-                          <RotatingLines
-                            strokeColor="#6a994e"
-                            strokeWidth="5"
-                            animationDuration="0.75"
-                            width="20"
-                          />
-                        ) : (
-                          <i className="fas fa-plus"></i>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-full flex flex-col items-center justify-center text-center py-12 px-4 w-full">
-              <div className="mb-4">
-                <i className="fa-solid fa-magnifying-glass text-5xl text-gray-400"></i>
-              </div>
-              <h4>找不到與「{searchTerm}」相關的產品</h4>
-              <p className="text-gray-500">
-                請嘗試其他關鍵字，或查看我們的全系列商品
-              </p>
-              <button
-                className=" mt-3 px-6 py-2 bg-enso-primary text-white rounded-full hover:bg-enso-primary/90 transition"
-                onClick={() => router.push("/product")}
+      <div className="enso-product-page__body">
+        <aside
+          className={`enso-product-page__filters${filtersOpen ? " is-open" : ""}`}
+          aria-label="Category filters"
+        >
+          <button
+            type="button"
+            className="enso-product-page__filters-toggle"
+            onClick={() => setFiltersOpen((v) => !v)}
+            aria-expanded={filtersOpen}
+            aria-controls="enso-cat-filter-list"
+            aria-label="切換分類篩選"
+          >
+            <span className="t-eyebrow">Category</span>
+            <span className="enso-product-page__filters-current">
+              {currentCategory === "all" ? "全部" : currentCategory}
+            </span>
+            <span className="enso-product-page__filters-chevron" aria-hidden>
+              {filtersOpen ? "−" : "+"}
+            </span>
+          </button>
+          <div className="enso-product-page__filters-body">
+            <ul id="enso-cat-filter-list" className="enso-cat-filter">
+              {categories.map((category) => (
+                <li key={category}>
+                  <button
+                    type="button"
+                    className={`enso-cat-filter__item ${currentCategory === category ? "is-active" : ""}`}
+                    onClick={() => {
+                      setCurrentCategory(category);
+                      setFiltersOpen(false);
+                    }}
+                    aria-label={`Filter by ${category}`}
+                  >
+                    <span>{category === "all" ? "全部" : category}</span>
+                    <span className="dot" aria-hidden />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+
+        <section className="enso-product-page__main">
+          <div className="enso-product-page__toolbar">
+            <div className="t-eyebrow">
+              {searchTerm ? `Search · ${searchTerm}` : currentCategory === "all" ? "All" : currentCategory}
+            </div>
+            <div className="enso-product-page__sort">
+              <label htmlFor="sort">排序</label>
+              <select
+                id="sort"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
               >
-                查看所有產品
+                <option value="default">預設</option>
+                <option value="price-asc">價格 · 低到高</option>
+                <option value="price-desc">價格 · 高到低</option>
+              </select>
+            </div>
+          </div>
+
+          {searchTerm && (
+            <div className="enso-product-page__search-bar">
+              搜尋「<strong>{searchTerm}</strong>」的結果：{filteredProducts.length} 件
+              <button type="button" onClick={() => router.push("/product")}>
+                清除搜尋
               </button>
             </div>
           )}
-        </div>
-        {filteredProducts.length > 0 && (
-          <Pagination pagination={pagination} onChangePage={getProducts} />
-        )}
+
+          <div className="enso-product-grid">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product, index) => (
+                <article
+                  key={product.id}
+                  className="enso-product-card"
+                  data-aos="fade-up"
+                  data-aos-delay={(index % 4) * 80}
+                >
+                  <button
+                    type="button"
+                    className="enso-product-card__media"
+                    onClick={() => router.push(`/product/${product.id}`)}
+                    aria-label={`View detail for ${product.title}`}
+                  >
+                    {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.title} />
+                    ) : (
+                      <div className="img-placeholder" style={{ width: "100%", height: "100%" }}>
+                        NO IMAGE
+                      </div>
+                    )}
+                    <span className="enso-product-card__kanji" aria-hidden>
+                      {FALLBACK_KANJI[index % FALLBACK_KANJI.length]}
+                    </span>
+                  </button>
+                  <div className="enso-product-card__eyebrow">{product.category}</div>
+                  <h3 className="enso-product-card__title">
+                    <button type="button" onClick={() => router.push(`/product/${product.id}`)}>
+                      {product.title}
+                    </button>
+                  </h3>
+                  <p className="enso-product-card__sub">{product.eng_title || product.feature || ""}</p>
+                  <div className="enso-product-card__footer">
+                    <div className="enso-product-card__price">
+                      <span className="now">{currency(product.price)}</span>
+                      {product.origin_price > product.price && (
+                        <span className="was">{currency(product.origin_price)}</span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      className="enso-product-card__add"
+                      onClick={(e) => handleAddCart(e, product.id)}
+                      disabled={loadingCartId === product.id}
+                      aria-label={`Add ${product.title} to cart`}
+                    >
+                      {loadingCartId === product.id ? (
+                        <RotatingLines strokeColor="#c9a063" strokeWidth="5" animationDuration="0.75" width="18" />
+                      ) : (
+                        <i className="fas fa-plus" />
+                      )}
+                    </button>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <div className="enso-product-empty">
+                <div className="t-eyebrow">No Result</div>
+                <h4>找不到「{searchTerm}」</h4>
+                <p>請嘗試其他關鍵字，或查看全系列商品。</p>
+                <button type="button" className="btn-ghost" onClick={() => router.push("/product")}>
+                  查看所有商品
+                </button>
+              </div>
+            )}
+          </div>
+
+          {filteredProducts.length > 0 && (
+            <Pagination pagination={pagination} onChangePage={getProducts} />
+          )}
+        </section>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,830 +1,171 @@
-// Shopping Agent — 浮動 AI 購物助理
-//
-// 設計語彙：
-// - 主色用 emerald/teal，對應「香氛／自然」的品牌調性
-// - 圓角大、陰影重，模仿 Intercom/Drift 這類現代 chat widget
-// - 所有尺寸 pixel 值保留硬編碼（widget 不應該跟 design system 其他部分共用）
+/* ============================================
+   ENSO 京都 — Shopping Agent (floating concierge)
+   ============================================ */
 
-$sa-primary: #10b981; // emerald-500
-$sa-primary-dark: #047857; // emerald-700
-$sa-teal: #0d9488; // teal-600
-$sa-border: #d1fae5; // emerald-100
-$sa-border-strong: #a7f3d0; // emerald-200
-$sa-bg-panel: #f8fafc; // slate-50
-$sa-bg-bubble-user: #334155; // slate-700
-$sa-bg-bubble-assistant: #ffffff;
-$sa-text-muted: #64748b; // slate-500
-$sa-text-body: #1e293b; // slate-800
-$sa-tool-bg: #ecfdf5; // emerald-50
-$sa-tool-text: #047857; // emerald-700
+/* Agent accent color tokens */
+.sa-agent-xiaohe { --sa-color: #c9a063; --sa-color-soft: rgba(201, 160, 99, 0.15); }
+.sa-agent-xiaoxiang { --sa-color: #d97757; --sa-color-soft: rgba(217, 119, 87, 0.15); }
+.sa-agent-xiaoguan { --sa-color: #8ba07a; --sa-color-soft: rgba(139, 160, 122, 0.15); }
 
-// -------- Phase 2：各 agent 主題色 --------
-// 小禾：emerald（保留原有購物主色）
-// 小香：amber／rose（像花香／胭脂）
-// 小管：indigo／blue（像物流／制服）
-
-$sa-xiaohe-dark: #047857; // emerald-700
-$sa-xiaohe-main: #10b981; // emerald-500
-$sa-xiaohe-border: #a7f3d0; // emerald-200
-$sa-xiaohe-bg: #ecfdf5; // emerald-50
-
-$sa-xiaoxiang-dark: #9d174d; // rose-800
-$sa-xiaoxiang-main: #f43f5e; // rose-500
-$sa-xiaoxiang-border: #fecdd3; // rose-200
-$sa-xiaoxiang-bg: #fff1f2; // rose-50
-
-$sa-xiaoguan-dark: #1e40af; // blue-800
-$sa-xiaoguan-main: #3b82f6; // blue-500
-$sa-xiaoguan-border: #bfdbfe; // blue-200
-$sa-xiaoguan-bg: #eff6ff; // blue-50
-
-// -------- 浮動按鈕（收合狀態） --------
-
+/* ===== Floating Action Button ===== */
 .sa-fab {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 9998;
-  width: 56px;
-  height: 56px;
+  right: 28px;
+  bottom: 28px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  border: none;
-  color: #fff;
-  font-size: 24px;
-  background: linear-gradient(135deg, $sa-primary 0%, $sa-teal 100%);
-  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+  background: var(--enso-ink-deep);
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
   cursor: pointer;
-  transition: all 0.2s ease-out;
-  display: flex;
+  z-index: 80;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.4s var(--ease-enso), border-color 0.3s;
 
   &:hover {
     transform: scale(1.05);
-    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.45);
+    border-color: var(--enso-gold);
   }
 
-  .sa-fab-dot {
+  &-enso {
+    display: inline-flex;
+    pointer-events: none;
+  }
+
+  &-dot {
     position: absolute;
-    top: -2px;
-    right: -2px;
-    width: 12px;
-    height: 12px;
+    top: 12px; right: 12px;
+    width: 8px; height: 8px;
     border-radius: 50%;
-    background: #ef4444;
-    border: 2px solid #fff;
-    animation: sa-pulse 2s infinite;
+    background: var(--enso-gold);
+    box-shadow: 0 0 10px var(--enso-gold);
+    animation: ensoEmberGlow 2.4s ease-in-out infinite;
   }
 
-  .sa-fab-tip {
+  &-tip {
     position: absolute;
     right: calc(100% + 12px);
-    background: #0f172a;
-    color: #fff;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--enso-ink-deep);
+    color: var(--enso-fg);
+    border: 1px solid var(--line);
+    padding: 6px 14px;
+    font-family: var(--font-serif-jp);
     font-size: 12px;
-    padding: 4px 8px;
-    border-radius: 4px;
+    letter-spacing: 0.2em;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s;
+    transition: opacity 0.3s;
   }
 
-  &:hover .sa-fab-tip {
-    opacity: 1;
-  }
+  &:hover .sa-fab-tip { opacity: 1; }
 }
 
-@keyframes sa-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-// -------- 對話面板（展開狀態） --------
-
+/* ===== Panel ===== */
 .sa-panel {
   position: fixed;
-  bottom: 16px;
-  right: 16px;
-  z-index: 9998;
+  right: 28px;
+  bottom: 28px;
+  width: 380px;
+  height: 580px;
+  max-height: calc(100vh - 56px);
+  background: var(--enso-ink-deep);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  z-index: 80;
   display: flex;
   flex-direction: column;
-  width: 360px;
-  height: 560px;
-  max-height: calc(100vh - 32px);
-  background: $sa-bg-panel;
-  border-radius: 16px;
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(0, 0, 0, 0.05);
+  font-family: var(--font-serif-tc);
+  color: var(--enso-fg);
   overflow: hidden;
+  animation: ensoFadeUp 0.4s var(--ease-enso) both;
 
-  @media (min-width: 576px) {
-    width: 400px;
+  @media (max-width: 480px) {
+    inset: 0;
+    width: auto;
+    height: auto;
+    max-height: none;
   }
 }
 
-// Header
 .sa-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  color: #fff;
-  background: linear-gradient(90deg, $sa-primary-dark 0%, $sa-teal 100%);
+  padding: 16px 18px;
+  background: var(--enso-ink);
+  border-bottom: 1px solid var(--line);
 
   .sa-header-left {
     display: flex;
     align-items: center;
-    gap: 8px;
-  }
-
-  .sa-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-  }
-
-  .sa-agent-name {
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 1.2;
-  }
-
-  .sa-adapter-label {
-    font-size: 10px;
-    opacity: 0.8;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    line-height: 1.2;
-  }
-
-  .sa-header-btn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.85);
-    padding: 4px 8px;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 4px;
-
-    &:hover {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.1);
-    }
+    gap: 12px;
   }
 }
 
-// Message list
-.sa-message-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-  background: linear-gradient(180deg, $sa-bg-panel 0%, #fff 100%);
-
-  // 自訂 scrollbar
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-  }
-}
-
-// Message bubbles
-.sa-msg {
-  display: flex;
-  margin-bottom: 12px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.sa-msg-user {
-  justify-content: flex-end;
-
-  .sa-bubble {
-    max-width: 80%;
-    background: $sa-bg-bubble-user;
-    color: #fff;
-    padding: 8px 14px;
-    border-radius: 16px 4px 16px 16px;
-  }
-}
-
-.sa-msg-assistant {
-  justify-content: flex-start;
-
-  .sa-msg-stack {
-    max-width: 85%;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .sa-bubble {
-    background: $sa-bg-bubble-assistant;
-    color: $sa-text-body;
-    padding: 8px 14px;
-    border: 1px solid $sa-border;
-    border-radius: 4px 16px 16px 16px;
-    white-space: pre-wrap;
-  }
-}
-
-.sa-tool-badge {
+.sa-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--sa-color, var(--enso-gold));
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  width: fit-content;
-  font-size: 11px;
-  color: $sa-tool-text;
-  background: $sa-tool-bg;
-  border: 1px solid $sa-border-strong;
-  border-radius: 999px;
-  padding: 2px 8px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-}
-
-.sa-tool-done {
-  font-size: 11px;
-  color: $sa-text-muted;
-  font-style: italic;
-  padding-left: 4px;
-  margin-bottom: 8px;
-}
-
-// Typing indicator
-.sa-typing {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: $sa-text-muted;
-  background: #f1f5f9;
-  border-radius: 999px;
-  padding: 6px 12px;
-
-  .sa-dots {
-    display: inline-flex;
-    gap: 2px;
-
-    span {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: #94a3b8;
-      animation: sa-bounce 1.2s infinite;
-
-      &:nth-child(1) {
-        animation-delay: -0.3s;
-      }
-      &:nth-child(2) {
-        animation-delay: -0.15s;
-      }
-    }
-  }
-}
-
-@keyframes sa-bounce {
-  0%,
-  80%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.4;
-  }
-  40% {
-    transform: translateY(-3px);
-    opacity: 1;
-  }
-}
-
-// Quick prompts
-.sa-quick-prompts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  // 上下 padding 對稱，避免按鈕貼到上方 messages 又跟下方 input form 之間留太大白
-  padding: 8px 12px;
-
-  button {
-    font-size: 12px;
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: #fff;
-    border: 1px solid $sa-border-strong;
-    color: $sa-tool-text;
-    cursor: pointer;
-
-    &:hover {
-      background: $sa-tool-bg;
-    }
-  }
-}
-
-// Input
-.sa-input-row {
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  padding: 12px;
-  border-top: 1px solid #e2e8f0;
-  background: #fff;
-
-  textarea {
-    flex: 1;
-    resize: none;
-    font-size: 14px;
-    padding: 8px 12px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    line-height: 1.4;
-    min-height: 36px;
-    max-height: 100px;
-    font-family: inherit;
-
-    &:focus {
-      outline: none;
-      border-color: $sa-primary;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-    }
-
-    &:disabled {
-      background: #f8fafc;
-      color: #94a3b8;
-    }
-  }
-
-  .sa-send-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    border: none;
-    background: $sa-primary-dark;
-    color: #fff;
-    flex-shrink: 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-
-    &:hover:not(:disabled) {
-      background: darken($sa-primary-dark, 5%);
-    }
-
-    &:disabled {
-      background: #cbd5e1;
-      cursor: not-allowed;
-    }
-  }
-}
-
-// ================================================================
-// Phase 2：Multi-agent UI
-// ================================================================
-
-// Agent 副標（header 裡的「｜購物助理」）
-.sa-agent-role {
-  font-weight: 400;
-  opacity: 0.85;
-  font-size: 12px;
-  margin-left: 2px;
-}
-
-// Panel header 依當前 agent 主題色切換 gradient
-.sa-panel-xiaohe .sa-panel-header {
-  background: linear-gradient(90deg, $sa-xiaohe-dark 0%, $sa-teal 100%);
-}
-.sa-panel-xiaoxiang .sa-panel-header {
-  background: linear-gradient(90deg, $sa-xiaoxiang-dark 0%, $sa-xiaoxiang-main 100%);
-}
-.sa-panel-xiaoguan .sa-panel-header {
-  background: linear-gradient(90deg, $sa-xiaoguan-dark 0%, $sa-xiaoguan-main 100%);
-}
-
-// Agent avatar 背景（固定色、不跟 header 同色）
-.sa-avatar.sa-agent-xiaohe,
-.sa-msg-avatar.sa-agent-xiaohe {
-  background: $sa-xiaohe-bg;
-}
-.sa-avatar.sa-agent-xiaoxiang,
-.sa-msg-avatar.sa-agent-xiaoxiang {
-  background: $sa-xiaoxiang-bg;
-}
-.sa-avatar.sa-agent-xiaoguan,
-.sa-msg-avatar.sa-agent-xiaoguan {
-  background: $sa-xiaoguan-bg;
-}
-
-// Agent tabs（header 下方一條）
-.sa-agent-tabs {
-  display: flex;
-  gap: 4px;
-  padding: 8px 12px;
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-
-  .sa-agent-tab {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: #f1f5f9;
-    color: $sa-text-muted;
-    transition: all 0.15s;
-
-    &.is-active {
-      color: #fff;
-      font-weight: 600;
-    }
-
-    &.sa-agent-xiaohe.is-active {
-      background: $sa-xiaohe-main;
-    }
-    &.sa-agent-xiaoxiang.is-active {
-      background: $sa-xiaoxiang-main;
-    }
-    &.sa-agent-xiaoguan.is-active {
-      background: $sa-xiaoguan-main;
-    }
-  }
-}
-
-// Assistant 訊息：左側頭像 + 氣泡堆疊
-.sa-msg-assistant {
-  gap: 8px;
-  align-items: flex-end;
-
-  .sa-msg-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    background: $sa-xiaohe-bg; // 預設（會被 agent-class 覆蓋）
-  }
-
-  .sa-msg-name {
-    font-size: 11px;
-    font-weight: 600;
-    color: $sa-text-muted;
-    padding-left: 4px;
-    line-height: 1;
-  }
-
-  // 小禾（預設）
-  &.sa-agent-xiaohe .sa-bubble {
-    border-color: $sa-xiaohe-border;
-  }
-  &.sa-agent-xiaohe .sa-msg-avatar {
-    background: $sa-xiaohe-bg;
-  }
-  &.sa-agent-xiaohe .sa-msg-name {
-    color: $sa-xiaohe-dark;
-  }
-
-  &.sa-agent-xiaoxiang .sa-bubble {
-    border-color: $sa-xiaoxiang-border;
-    background: #fff;
-  }
-  &.sa-agent-xiaoxiang .sa-msg-avatar {
-    background: $sa-xiaoxiang-bg;
-  }
-  &.sa-agent-xiaoxiang .sa-msg-name {
-    color: $sa-xiaoxiang-dark;
-  }
-
-  &.sa-agent-xiaoguan .sa-bubble {
-    border-color: $sa-xiaoguan-border;
-    background: #fff;
-  }
-  &.sa-agent-xiaoguan .sa-msg-avatar {
-    background: $sa-xiaoguan-bg;
-  }
-  &.sa-agent-xiaoguan .sa-msg-name {
-    color: $sa-xiaoguan-dark;
-  }
-}
-
-// Handoff 提示條（system role 訊息）
-.sa-handoff {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
   justify-content: center;
-  padding: 6px 10px;
-  margin: 10px 0;
+  font-family: var(--font-serif-jp);
+  font-size: 18px;
+  color: var(--sa-color, var(--enso-gold));
+  background: rgba(13, 15, 14, 0.6);
+}
+
+.sa-agent-name {
+  font-family: var(--font-serif-jp);
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  color: var(--enso-fg);
+}
+
+.sa-agent-role {
+  margin-left: 4px;
   font-size: 11px;
-  background: #f8fafc;
-  border: 1px dashed #cbd5e1;
-  border-radius: 8px;
-  color: $sa-text-muted;
-
-  .sa-handoff-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 3px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-weight: 600;
-
-    &.sa-agent-xiaohe {
-      background: $sa-xiaohe-bg;
-      color: $sa-xiaohe-dark;
-    }
-    &.sa-agent-xiaoxiang {
-      background: $sa-xiaoxiang-bg;
-      color: $sa-xiaoxiang-dark;
-    }
-    &.sa-agent-xiaoguan {
-      background: $sa-xiaoguan-bg;
-      color: $sa-xiaoguan-dark;
-    }
-  }
-
-  .sa-handoff-arrow {
-    font-size: 14px;
-    color: #94a3b8;
-  }
-
-  .sa-handoff-reason {
-    width: 100%;
-    text-align: center;
-    font-size: 10px;
-    margin-top: 2px;
-  }
+  letter-spacing: 0.1em;
+  color: var(--fg-muted);
 }
 
-// Input focus ring 跟著 agent 主題
-.sa-panel-xiaohe .sa-input-row textarea:focus {
-  border-color: $sa-xiaohe-main;
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
-.sa-panel-xiaoxiang .sa-input-row textarea:focus {
-  border-color: $sa-xiaoxiang-main;
-  box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.2);
-}
-.sa-panel-xiaoguan .sa-input-row textarea:focus {
-  border-color: $sa-xiaoguan-main;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+.sa-adapter-label {
+  font-family: var(--font-latin-display);
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  margin-top: 2px;
+
+  &::before { content: 'ENSO · KYOTO · CONCIERGE · '; color: var(--fg-dim); opacity: 0.6; }
 }
 
-.sa-panel-xiaohe .sa-send-btn {
-  background: $sa-xiaohe-dark;
-}
-.sa-panel-xiaoxiang .sa-send-btn {
-  background: $sa-xiaoxiang-dark;
-}
-.sa-panel-xiaoguan .sa-send-btn {
-  background: $sa-xiaoguan-dark;
-}
-
-// Line 包裝（多行訊息使用）
-.sa-line {
-  display: block;
-}
-
-// -------- 使用者記憶面板（M6） --------
-// 疊在 ChatPanel 上的 overlay，不是全螢幕 modal，只蓋住 widget 範圍
-
-.sa-memory-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.32);
-  backdrop-filter: blur(2px);
-  z-index: 20;
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  padding: 0;
-  border-radius: inherit;
-}
-
-.sa-memory-panel {
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  border-radius: inherit;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-}
-
-.sa-memory-header {
-  padding: 14px 16px;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  background: #fafafa;
-
-  .sa-memory-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: $sa-text-body;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    i {
-      color: #f59e0b; // amber-500（燈泡＝記憶／洞察）
-    }
-  }
-
-  .sa-memory-subtitle {
-    font-size: 12px;
-    color: $sa-text-muted;
-    margin-top: 4px;
-    line-height: 1.5;
-  }
-}
-
-.sa-memory-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-}
-
-.sa-memory-empty {
-  padding: 32px 16px;
-  text-align: center;
-  color: $sa-text-muted;
-
-  .sa-memory-empty-icon {
-    font-size: 40px;
-    margin-bottom: 8px;
-  }
-
-  .sa-memory-empty-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: $sa-text-body;
-    margin-bottom: 4px;
-  }
-
-  .sa-memory-empty-hint {
-    font-size: 12px;
-    line-height: 1.6;
-  }
-}
-
-.sa-memory-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.sa-memory-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 10px 12px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  transition: border-color 0.15s ease;
-
-  &:hover {
-    border-color: #d1d5db;
-  }
-
-  .sa-memory-item-main {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .sa-memory-item-key {
-    font-size: 12px;
-    font-weight: 600;
-    color: $sa-text-muted;
-    letter-spacing: 0.03em;
-  }
-
-  .sa-memory-item-value {
-    font-size: 14px;
-    color: $sa-text-body;
-    margin-top: 2px;
-    line-height: 1.5;
-    word-break: break-word;
-  }
-
-  .sa-memory-item-meta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    margin-top: 6px;
-    font-size: 11px;
-  }
-
-  .sa-memory-item-source {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-weight: 500;
-
-    &.sa-agent-xiaohe {
-      background: $sa-xiaohe-bg;
-      color: $sa-xiaohe-dark;
-    }
-    &.sa-agent-xiaoxiang {
-      background: $sa-xiaoxiang-bg;
-      color: $sa-xiaoxiang-dark;
-    }
-    &.sa-agent-xiaoguan {
-      background: $sa-xiaoguan-bg;
-      color: $sa-xiaoguan-dark;
-    }
-  }
-
-  .sa-memory-item-time {
-    color: $sa-text-muted;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .sa-memory-item-delete {
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    border: none;
-    background: transparent;
-    color: $sa-text-muted;
-    border-radius: 6px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition:
-      background 0.15s ease,
-      color 0.15s ease;
-
-    &:hover {
-      background: #fee2e2; // red-100
-      color: #b91c1c; // red-700
-    }
-  }
-}
-
-.sa-memory-footer {
-  padding: 10px 16px;
-  border-top: 1px solid #e5e7eb;
-  display: flex;
+.sa-header-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--fg-muted);
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  background: #fafafa;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s, border-color 0.3s;
 
-  .sa-memory-privacy {
-    font-size: 11px;
-    color: $sa-text-muted;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
+  &:hover { color: var(--enso-gold); border-color: var(--line); }
 
-  .sa-memory-clear {
-    font-size: 12px;
-    background: transparent;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
-    padding: 4px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: background 0.15s ease;
-
-    &:hover {
-      background: #fef2f2;
-    }
-  }
+  i { font-size: 14px; }
 }
 
-// Header 上的 memory count badge
 .sa-memory-badge {
   position: absolute;
   top: -4px;
@@ -833,15 +174,293 @@ $sa-xiaoguan-bg: #eff6ff; // blue-50
   height: 16px;
   padding: 0 4px;
   border-radius: 8px;
-  background: #f59e0b;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: center;
-  pointer-events: none;
+  background: var(--enso-gold);
+  color: var(--enso-ink);
+  font-family: var(--font-latin-display);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.sa-header-btn-memory {
-  position: relative;
+/* ===== Agent tabs ===== */
+.sa-agent-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border-bottom: 1px solid var(--line);
 }
+
+.sa-agent-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+  background: var(--enso-ink-deep);
+  font-family: var(--font-serif-jp);
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  color: var(--fg-muted);
+  cursor: default;
+  transition: color 0.3s, background 0.3s;
+  border: none;
+
+  > span:first-child {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--sa-color-soft);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sa-color);
+    font-size: 11px;
+  }
+
+  &.is-active {
+    color: var(--sa-color, var(--enso-gold));
+    background: var(--enso-ink);
+    box-shadow: inset 0 -2px 0 var(--sa-color, var(--enso-gold));
+  }
+}
+
+/* ===== Messages list ===== */
+.sa-message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: var(--line-strong); }
+}
+
+.sa-msg {
+  display: flex;
+  gap: 10px;
+  font-family: var(--font-serif-tc);
+  font-size: 13px;
+  line-height: 1.8;
+
+  &-user {
+    justify-content: flex-end;
+
+    .sa-bubble {
+      background: var(--enso-gold);
+      color: var(--enso-ink);
+      border-radius: 12px 2px 12px 12px;
+      padding: 10px 14px;
+      max-width: 80%;
+      letter-spacing: 0.05em;
+    }
+  }
+
+  &-assistant {
+    .sa-msg-avatar {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(13, 15, 14, 0.6);
+      border: 1px solid var(--sa-color, var(--enso-gold));
+      color: var(--sa-color, var(--enso-gold));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif-jp);
+      font-size: 13px;
+    }
+
+    .sa-msg-stack {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sa-msg-name {
+      font-family: var(--font-serif-jp);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--sa-color, var(--enso-gold));
+    }
+
+    .sa-bubble {
+      background: var(--enso-ink);
+      color: var(--enso-fg);
+      border: 1px solid var(--line);
+      border-left: 2px solid var(--sa-color, var(--enso-gold));
+      padding: 10px 14px;
+      max-width: 100%;
+
+      strong { color: var(--enso-gold); font-weight: 500; }
+      .sa-line { display: block; }
+    }
+  }
+}
+
+.sa-typing {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--enso-ink);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--sa-color, var(--enso-gold));
+  font-family: var(--font-serif-tc);
+  font-size: 12px;
+  color: var(--fg-muted);
+  letter-spacing: 0.1em;
+
+  .sa-dots {
+    display: inline-flex; gap: 3px;
+    span {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--sa-color, var(--enso-gold));
+      animation: ensoEmberGlow 1.4s ease-in-out infinite;
+    }
+    span:nth-child(2) { animation-delay: 0.15s; }
+    span:nth-child(3) { animation-delay: 0.3s; }
+  }
+}
+
+.sa-tool-badge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  font-family: var(--font-latin-display);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--fg-muted);
+}
+
+.sa-tool-done {
+  align-self: flex-start;
+  font-family: var(--font-serif-tc);
+  font-size: 11px;
+  color: var(--fg-dim);
+  letter-spacing: 0.15em;
+}
+
+/* ===== Handoff bar ===== */
+.sa-handoff {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+  font-family: var(--font-serif-jp);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--fg-muted);
+
+  &-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(13, 15, 14, 0.6);
+    border: 1px solid var(--sa-color, var(--enso-gold));
+    color: var(--sa-color, var(--enso-gold));
+
+    > span:first-child {
+      font-family: var(--font-serif-jp);
+      font-size: 12px;
+    }
+  }
+
+  &-arrow {
+    color: var(--fg-muted);
+  }
+
+  &-reason {
+    color: var(--fg-dim);
+    font-style: italic;
+    font-family: var(--font-serif-tc);
+    letter-spacing: 0.05em;
+  }
+}
+
+/* ===== Quick prompts ===== */
+.sa-quick-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 18px 12px;
+
+  button {
+    text-align: left;
+    padding: 10px 14px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--fg-muted);
+    font-family: var(--font-serif-tc);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: border-color 0.3s, color 0.3s;
+
+    &:hover {
+      border-color: var(--enso-gold);
+      color: var(--enso-fg);
+    }
+  }
+}
+
+/* ===== Input row ===== */
+.sa-input-row {
+  display: flex;
+  gap: 8px;
+  padding: 14px 14px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--enso-ink);
+
+  textarea {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--enso-fg);
+    font-family: var(--font-serif-tc);
+    font-size: 13px;
+    padding: 10px 12px;
+    resize: none;
+    max-height: 120px;
+    transition: border-color 0.3s;
+
+    &::placeholder { color: var(--fg-dim); }
+    &:focus { outline: none; border-color: var(--enso-gold); }
+  }
+}
+
+.sa-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 0;
+  border: 1px solid var(--sa-color, var(--enso-gold));
+  background: var(--sa-color, var(--enso-gold));
+  color: var(--enso-ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s;
+
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  i { font-size: 14px; }
+}
+
+/* Apply per-agent panel accent at root */
+.sa-panel-xiaohe { --sa-color: #c9a063; --sa-color-soft: rgba(201, 160, 99, 0.15); }
+.sa-panel-xiaoxiang { --sa-color: #d97757; --sa-color-soft: rgba(217, 119, 87, 0.15); }
+.sa-panel-xiaoguan { --sa-color: #8ba07a; --sa-color-soft: rgba(139, 160, 122, 0.15); }

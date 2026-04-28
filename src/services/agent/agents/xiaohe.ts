@@ -8,7 +8,7 @@ export const xiaohe: AgentPersona = {
   id: "xiaohe",
   name: "小禾",
   shortTitle: "購物助理",
-  avatar: "🌿",
+  avatar: "禾",
   themeClass: "xiaohe",
   toolNames: [
     "search_products",

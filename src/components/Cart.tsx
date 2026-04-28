@@ -113,7 +113,7 @@ function Cart(): JSX.Element {
       </div>
       <div className="flex justify-center">
         <div
-          className="w-full md:max-w-xl  bg-white py-12"
+          className="w-full md:max-w-xl py-12 px-6 enso-cart-panel"
           style={{
             minHeight: "calc(100vh - 56px - 76px)",
           }}

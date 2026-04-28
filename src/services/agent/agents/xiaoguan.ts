@@ -8,7 +8,7 @@ export const xiaoguan: AgentPersona = {
   id: "xiaoguan",
   name: "小管",
   shortTitle: "訂單與會員",
-  avatar: "📦",
+  avatar: "管",
   themeClass: "xiaoguan",
   toolNames: [
     "get_order_status",

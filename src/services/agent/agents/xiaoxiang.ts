@@ -8,7 +8,7 @@ export const xiaoxiang: AgentPersona = {
   id: "xiaoxiang",
   name: "小香",
   shortTitle: "香氛知識專家",
-  avatar: "🪷",
+  avatar: "香",
   themeClass: "xiaoxiang",
   toolNames: [
     "retrieve_knowledge",
