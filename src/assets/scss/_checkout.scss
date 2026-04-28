@@ -89,6 +89,9 @@
   font-family: var(--font-serif-tc);
   padding: 14px 16px !important;
   transition: border-color 0.3s;
+  width: 100%;
+  display: block;
+  box-sizing: border-box;
 
   &:focus {
     outline: none !important;

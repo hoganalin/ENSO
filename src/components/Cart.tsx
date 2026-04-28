@@ -141,11 +141,11 @@ function Cart(): JSX.Element {
                   alt=""
                   className="w-[120px] h-[120px] md:h-full object-cover"
                 />
-                <p className="md:hidden text-enso-gold font-bold text-center whitespace-nowrap mt-auto pb-[26px]">
+                <p className="md:hidden text-enso-gold font-bold text-center whitespace-nowrap my-auto">
                   NT${currency(cartItem.total)}
                 </p>
               </div>
-              <div className="w-full min-w-0 p-3 pr-12 relative">
+              <div className="w-full min-w-0 p-3 relative">
                 <button
                   type="button"
                   className="absolute top-3 right-3 p-0 border-0 bg-transparent leading-none"
