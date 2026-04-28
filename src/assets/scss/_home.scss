@@ -345,6 +345,24 @@
   overflow: hidden;
   @media (max-width: 768px) { padding: 96px 24px; }
 
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/images/incene-bg.png") center/cover no-repeat;
+    background-attachment: fixed;
+    opacity: 0.55;
+    z-index: 0;
+    @media (max-width: 768px) { background-attachment: scroll; }
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.5) 100%);
+    z-index: 0;
+  }
+
   &__inner { max-width: 880px; margin: 0 auto; text-align: center; position: relative; z-index: 1; }
   &__quote {
     font-family: var(--font-serif-jp);
@@ -405,10 +423,31 @@
 
 /* CTA */
 .enso-cta {
+  position: relative;
   padding: 140px 48px;
   text-align: center;
   background: var(--enso-ink-deep);
+  overflow: hidden;
   @media (max-width: 768px) { padding: 96px 24px; }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/images/incene-breath-bg.png") center/cover no-repeat;
+    background-attachment: fixed;
+    opacity: 0.55;
+    z-index: 0;
+    @media (max-width: 768px) { background-attachment: scroll; }
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.5) 100%);
+    z-index: 0;
+  }
+  > * { position: relative; z-index: 1; }
 
   &__title {
     font-family: var(--font-serif-jp);
